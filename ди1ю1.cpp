@@ -26,6 +26,7 @@ void restorePolygonVertices(const Right_M* Obj, const int amount);
 void print_menu();
 int get_variant(int count);
 void print_menu1();
+void case4();
 
 int main()
 {
@@ -68,21 +69,8 @@ int main()
                 break;
             }
             else {
-                print_menu1();
-                while (variant > 0 && variant < 4) {
-                    cin >> variant;
-                }
-                switch (variant)
-                {
-                case 1:
-                    findMaxArea(Geometry, M_amount);
-                    break;
-                case 2:
-                    findMaxPerimetr(Geometry, M_amount);
-                    break;
-                case 3:
-                    break;
-                }
+                case4();
+                break;
             }
         case 5:
             cout << "Вы точно хотите выйти? Для подтверждения нажмите 1 " << endl;
@@ -237,6 +225,24 @@ void print_menu()
 //
 //    return variant;
 //}
+
+void case4() {
+    print_menu1();
+    while (variant <= 0 || variant >= 4) {
+        cin >> variant;
+    }
+    switch (variant)
+    {
+    case 1:
+        findMaxArea(Geometry, M_amount);
+        break;
+    case 2:
+        findMaxPerimetr(Geometry, M_amount);
+        break;
+    case 3:
+        break;
+    }
+}
 
 void print_menu1()
 {
