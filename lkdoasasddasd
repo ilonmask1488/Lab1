@@ -295,7 +295,7 @@ void print_menu()
 void restorePolygonVertices(const Right_M* Obj, const int amount) {
     for (int i = 0; i < amount; ++i)
     {
-        double R, delXr, delYr, Xr, Yr, k;
+        double R, delXr, delYr, Xr, Yr,k;
         double Izmx1 = fabs(Obj[i].x);
         double Izmy1 = fabs(Obj[i].y);
         int flagx = 1;
