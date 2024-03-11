@@ -1,6 +1,9 @@
 #include <iostream>
 #include <cmath>
 #include <string>
+#include <sstream>
+
+#define _USE_MATH_DEFINES
 
 using namespace std;
 
@@ -24,9 +27,8 @@ void findMaxArea(const Right_M* Obj, const int amount);
 void findMaxPerimetr(const Right_M* Obj, const int amount);
 void restorePolygonVertices(const Right_M* Obj, const int amount);
 void print_menu();
-int get_variant(int count);
+int Get_Variant();
 void print_menu1();
-void case4();
 
 int main()
 {
@@ -37,20 +39,12 @@ int main()
     int h;
     int count = 0;
     int YeaOrNot = 0;
-    int variant = 0;
     int prov = 0;
+    int variant = 0;
     while (true) {
         system("cls");
         print_menu();
-        while (prov != 1){
-            cin >> h;
-            if(h > 0 && h <= 5){
-                prov = 1;
-            }
-            else {
-                cout << "Такого параметра нет, попробуйте снова " << endl;
-            }
-        }
+        h = Get_Variant();
         switch (h)
         {
         case 1:
@@ -59,9 +53,15 @@ int main()
             M_amount++;
             break;
         case 2:
-            showData(Geometry, M_amount);
-            restorePolygonVertices(Geometry, M_amount);
-            break;
+            if (M_amount == 0) {
+                cout << "Вы не задали ни одного многоугольника" << endl;
+                break;
+            }
+            else {
+                showData(Geometry, M_amount);
+                restorePolygonVertices(Geometry, M_amount);
+                break;
+            }
         case 3:
             if (M_amount == 0) {
                 cout << "Вы хотите удалить структуры, которых нет " << endl;
@@ -78,13 +78,14 @@ int main()
                 break;
             }
             else {
-                print_menu1();
-                int variant;
-                while (variant <= 0 || variant >= 4) {
-                    cin >>variant;
-                }
-                switch (variant)
-                {
+                while (true) {
+                    print_menu1();
+                    variant = Get_Variant();
+                    if (variant == 3) {
+                        break;
+                    }
+                    switch (variant)
+                    {
                     case 1:
                         findMaxArea(Geometry, M_amount);
                         break;
@@ -92,9 +93,9 @@ int main()
                         findMaxPerimetr(Geometry, M_amount);
                         break;
                     case 3:
-                    break;
+                        break;
+                    }
                 }
-                variant = 0;
                 break;
             }
         case 5:
@@ -104,12 +105,14 @@ int main()
                 break;
             }
             break;
+        default:
+            cout << "нет такого " << endl;
+            break;
         }
         if (YeaOrNot == 1) {
             break;
         }
         system("pause");
-        prov = 0;
     }
 
     delete[] Geometry;
@@ -130,38 +133,35 @@ Right_M* AddStruct(Right_M* Obj, const int amount)
 
 void setData(Right_M* Obj, const int amount)
 {
-    int prov1, prov2;
     cout << "Введите длину стороны" << endl;
-    while (prov1 != 1){
-        cin >> Obj[amount].len;
-        if(Obj[amount].len > 0){
-            prov1 = 1;
+    while (true) {
+        Obj[amount].len = Get_Variant();
+        if (Obj[amount].len > 0) {
+            break;
         }
         else {
             cout << "Введите положительное значение " << endl;
         }
     }
+
     cout << "Введите количество сторон" << endl;
-    while (prov2 != 1){
-        cin >> Obj[amount].kolstr;
-        if(Obj[amount].kolstr >= 3){
-            prov2 = 1;
+    while (true) {
+        Obj[amount].kolstr = Get_Variant();
+        if (Obj[amount].kolstr >= 3) {
+            break;
         }
         else {
             cout << "Введите положительное значение " << endl;
         }
     }
     cout << "Введите координаты x и y" << endl;
-    cin >> Obj[amount].x >> Obj[amount].y;
+    Obj[amount].x = Get_Variant();
+    Obj[amount].y = Get_Variant();
 
     // Вычисляем площадь и периметр
     Obj[amount].S = computeArea(Obj[amount]);
     Obj[amount].P = computePerimeter(Obj[amount]);
-    prov1 = 0;
-    prov2 = 0;
 
-
-    cout << endl;
 }
 
 void showData(const Right_M* Obj, const int amount)
@@ -176,9 +176,18 @@ void showData(const Right_M* Obj, const int amount)
 double computeArea(const Right_M& obj)
 {
     if (obj.kolstr < 3) return 0.0; // Многоугольник должен иметь хотя бы 3 стороны
-
+    double S;
     double a = obj.len;
-    double S = (obj.kolstr * a * a) / (4 * tan(3.14 / obj.kolstr)); // Формула для правильного многоугольника
+    if (obj.kolstr == 3) {
+        S = (sqrt(3.) * a * a) / 4;
+    }
+    if (obj.kolstr == 4) {
+        S = a * a;
+    }
+    else {
+        S = (obj.kolstr * a * a) / (4 * tan(3.14 / obj.kolstr)); // Формула для правильного многоугольника
+    }
+
     return S;
 }
 
@@ -208,6 +217,29 @@ void Delete(Right_M* Obj, const int amount) {
     }
 }
 
+int Get_Variant() {
+    int number;
+    string userInput;
+    getline(cin, userInput);
+    stringstream ss(userInput);
+    if (ss >> number) {
+        return number;
+    }
+    else {
+        while (true) {
+            getline(cin, userInput);
+            stringstream ss(userInput);
+            if (ss >> number) {
+                break;
+            }
+            else {
+                cout << "Ошибка! Пожалуйста, введите число снова." << endl;
+            }
+        }
+    }
+    return number;
+}
+
 void findMaxArea(const Right_M* Obj, const int amount)
 {
     double maxArea = 0.0;
@@ -223,6 +255,7 @@ void findMaxArea(const Right_M* Obj, const int amount)
         if (Obj[i].S == maxArea) {
             cout << "Номер многоугольника с максимальной площадью: " << i + 1 << endl;
             cout << "Максимальная площадь: " << maxArea << "\n" << endl;
+            system("pause");
         }
     }
 }
@@ -242,6 +275,7 @@ void findMaxPerimetr(const Right_M* Obj, const int amount)
         if (Obj[i].P == maxPerimetr) {
             cout << "Номер многоугольника с максимальном периметром: " << i + 1 << endl;
             cout << "Максимальный периметр: " << maxPerimetr << "\n" << endl;
+            system("pause");
         }
     }
 }
@@ -255,27 +289,51 @@ void print_menu()
     cout << "3. Удалить запись о каком-либо многоугольнике" << endl;
     cout << "4. Определение максимальных площади или периметра" << endl;
     cout << "5. Выход" << endl;
-    cout << ">";
+    cout << "> ";
 }
 
-/*void case4() {
-    print_menu1();
-    int variant;
-    while (variant <= 0 || variant >= 4) {
-        cin >>variant;
-    }
-    switch (variant)
+void restorePolygonVertices(const Right_M* Obj, const int amount) {
+    for (int i = 0; i < amount; ++i)
     {
-    case 1:
-        findMaxArea(Geometry, M_amount);
-        break;
-    case 2:
-        findMaxPerimetr(Geometry, M_amount);
-        break;
-    case 3:
-        break;
+        double R, delXr, delYr, Xr, Yr, k;
+        double Izmx1 = fabs(Obj[i].x);
+        double Izmy1 = fabs(Obj[i].y);
+        int flagx = 1;
+        int flagy = 1;
+        if (Obj[i].x < 0) { flagx = -1; }
+        if (Obj[i].y < 0) { flagy = -1; }
+        R = Obj[i].len / (2 * sin(M_PI / Obj[i].kolstr));
+        if ((sqrt(pow(Izmx1, 2.0) + pow(Izmy1, 2.0)) - R) < 0)
+        {
+            cout << "Неправильные координаты \n";
+            continue;
+        }
+        k = atan(Izmy1 / Izmx1);
+        delXr = R * cos(k);
+        delYr = R * sin(k);
+        Xr = Izmx1 - delXr;
+        Yr = Izmy1 - delYr;
+        double angle = 2 * M_PI / Obj[i].kolstr;
+        cout << "Координаты многоугольника №1: " << i + 1 << "\n";
+        cout << "Вершина 1: " << Obj[i].x << ";" << Obj[i].y << "\n";
+        for (int j = 1; j < Obj[i].kolstr; ++j)
+        {
+            if (flagx != flagy) {
+                double NewAngle = atan(Izmy1 / Izmx1) - j * angle;
+                double NextX = Xr + R * cos(NewAngle);
+                double NextY = Yr + R * sin(NewAngle);
+                cout << "Вершина " << j + 1 << ": " << NextX * flagx << ";" << NextY * flagy << "\n";
+            }
+            else {
+                double NewAngle = atan(Izmy1 / Izmx1) + j * angle;
+                double NextX = Xr + R * cos(NewAngle);
+                double NextY = Yr + R * sin(NewAngle);
+                cout << "Вершина " << j + 1 << ": " << NextX * flagx << ";" << NextY * flagy << "\n";
+            }
+
+        }
     }
-}*/
+}
 
 void print_menu1()
 {
@@ -284,25 +342,6 @@ void print_menu1()
     cout << "1. Определить многоугольник с максимальной площадью" << endl;
     cout << "2. Определить многоугольник с максимальным периметром" << endl;
     cout << "3. Выход на главное меню" << endl;
-    cout << ">";
+    cout << "> ";
 }
 
-void restorePolygonVertices(const Right_M* Obj, const int amount)
-{
-    for (int j = 0; j < amount; j++) {
-        cout << "\n" << "Координаты вершин многоугольника №" << j + 1 << endl;
-        double angleIncrement = 2 * 3.14 / Obj[j].kolstr; // Угол между соседними вершинами
-        double radius = Obj[j].len / (2 * sin(3.14 / Obj[j].kolstr)); // Радиус описанной окружности
-        double Ox = Obj[j].x - radius * cos(0);
-        double Oy = Obj[j].y - radius * sin(0);
-
-        cout << "Координаты вершин: " << endl;
-        cout << "Вершины 1: (" << Obj[j].x << ", " << Obj[j].y << ")" << endl;
-        for (int i = 1; i < Obj[j].kolstr; i++) {
-            double angle = i * angleIncrement;
-            double newX = Ox + radius * cos(angle);
-            double newY = Oy + radius * sin(angle);
-            cout << "Вершины " << i + 1 << ": (" << newX << ", " << newY << ")" << endl;
-        }
-    }
-}
