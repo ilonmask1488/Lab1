@@ -233,7 +233,7 @@ int Get_Variant() {
             break;
         }
         else {
-            cout << "ошибка! пожалуйста, введите число снова." << endl;
+            cout << "Ошибка! Пожалуйста, введите число снова." << endl;
         }
     }
     return number;
@@ -260,7 +260,6 @@ void findMaxArea(const Right_M* Obj, const int amount, int number)
                 cout << "Максимальная площадь: " << maxArea << "\n" << endl;
             }
         }
-        system("pause");
     case 2:
         // Находим максимальный периметр
         for (int i = 0; i < amount; i++) {
