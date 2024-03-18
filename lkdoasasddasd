@@ -23,8 +23,7 @@ void showData(const Right_M* Obj, const int amount);
 double computeArea(const Right_M& obj);
 double computePerimeter(const Right_M& obj);
 void Delete(Right_M* Obj, const int amount);
-void findMaxArea(const Right_M* Obj, const int amount, int number);
-void findMaxPerimetr(const Right_M* Obj, const int amount);
+void findMax_A_P(const Right_M* Obj, const int amount, int number);
 void restorePolygonVertices(const Right_M* Obj, const int amount);
 void print_menu();
 int Get_Variant();
@@ -85,7 +84,7 @@ int main()
                         break;
                     }
                     else {
-                        findMaxArea(Geometry, M_amount, variant);
+                        findMax_A_P(Geometry, M_amount, variant);
                     }
                 }
                 break;
@@ -239,7 +238,7 @@ int Get_Variant() {
     return number;
 }
 
-void findMaxArea(const Right_M* Obj, const int amount, int number)
+void findMax_A_P(const Right_M* Obj, const int amount, int number)
 {
     double maxArea = 0.0;
     double maxPerimetr = 0.0;
