@@ -157,7 +157,7 @@ void setData(Right_M* Obj, const int amount)
         double Izmx1 = fabs(Obj[amount].x);
         double Izmy1 = fabs(Obj[amount].y);
 
-        R = Obj[amount].len / (2 * sin(3.14 / Obj[amount].kolstr));
+        R = Obj[amount].len / (2 * sin(M_PI / Obj[amount].kolstr));
         if ((sqrt(pow(Izmx1, 2.0) + pow(Izmy1, 2.0)) - R) < 0)
         {
             cout << "Многоугольник с заданными параметрами не попадает под условие, повторите ввод" << endl;
@@ -192,7 +192,7 @@ double computeArea(const Right_M& obj)
         S = a * a;
     }
     else {
-        S = (obj.kolstr * a * a) / (4 * tan(3.14 / obj.kolstr)); // Формула для правильного многоугольника
+        S = (obj.kolstr * a * a) / (4 * tan(M_PI / obj.kolstr)); // Формула для правильного многоугольника
     }
 
     return S;
@@ -290,13 +290,13 @@ void restorePolygonVertices(const Right_M* Obj, const int amount) {
         int flagy = 1;
         if (Obj[i].x < 0) { flagx = -1; }
         if (Obj[i].y < 0) { flagy = -1; }
-        R = Obj[i].len / (2 * sin(3.14 / Obj[i].kolstr));
+        R = Obj[i].len / (2 * sin(M_PI / Obj[i].kolstr));
         k = atan(Izmy1 / Izmx1);
         delXr = R * cos(k);
         delYr = R * sin(k);
         Xr = Izmx1 - delXr;
         Yr = Izmy1 - delYr;
-        double angle = 2 * 3.14 / Obj[i].kolstr;
+        double angle = 2 * M_PI / Obj[i].kolstr;
         cout << "Координаты многоугольника №1: " << i + 1 << "\n";
         cout << "Вершина 1: " << Obj[i].x << ";" << Obj[i].y << "\n";
         for (int j = 1; j < Obj[i].kolstr; ++j)
