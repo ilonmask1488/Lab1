@@ -132,7 +132,7 @@ void setData(Right_M* Obj, const int amount)
         cout << "Введите длину стороны" << endl;
         while (true) {
             Obj[amount].len = Get_Variant();
-            if (Obj[amount].len > 0) {
+            if (Obj[amount].len > 1.7^-306) {
                 break;
             }
             else {
