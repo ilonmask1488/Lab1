@@ -243,39 +243,52 @@ int Get_Variant() {
 
 void findMax_A_P(const Right_M* Obj, const int amount, int number)
 {
-    double maxArea = 0.0;
-    double maxPerimetr = 0.0;
-
-    if (number == 1) {
-        // Находим максимальную площадь
-        for (int i = 0; i < amount; i++) {
-            if (Obj[i].S > maxArea) {
-                maxArea = Obj[i].S;
-            }
-        }
-
-        for (int i = 0; i < amount; i++) {
-            if (Obj[i].S == maxArea) {
-                cout << "Номер многоугольника с максимальной площадью: " << i + 1 << endl;
-                cout << "Максимальная площадь: " << maxArea << "\n" << endl;
-            }
+    double maxP_S = 0.0;
+    int amount_max = 0;
+    int *indexA_P = new int [amount];
+    double* value = new double[amount];
+    if (number == 2)
+    {
+        for (int i = 0; i < amount; i++)
+        {
+            value[i] = Obj[i].P;
         }
     }
-    if (number == 2) {
-        // Находим максимальный периметр
-        for (int i = 0; i < amount; i++) {
-            if (Obj[i].S > maxPerimetr) {
-                maxPerimetr = Obj[i].P;
-            }
-        }
-
-        for (int i = 0; i < amount; i++) {
-            if (Obj[i].P == maxPerimetr) {
-                cout << "Номер многоугольника с максимальном периметром: " << i + 1 << endl;
-                cout << "Максимальный периметр: " << maxPerimetr << "\n" << endl;
-            }
+    if (number == 1)
+    {
+        for (int i = 0; i < amount; i++)
+        {
+            value[i] = Obj[i].S;
         }
     }
+    for (int i = 0; i < amount; i++)
+    {
+        if (value[i] > maxP_S)
+        {
+            maxP_S = value[i];
+        }
+    }
+    for (int i = 0; i < amount; i++)
+    {
+        if (value[i] == maxP_S)
+        {
+            indexA_P[amount_max] = i;
+            amount_max++;
+        }
+    }
+    for (int i = 0; i < amount; i++) {
+        if (number == 1 && value[i] == maxP_S) {
+            cout << "Номер многоугольника с максимальной площадью: " << i + 1 << endl;
+            cout << "Максимальная площадь: " << maxP_S << "\n" << endl;
+        }
+    }
+    for (int i = 0; i < amount_max; i++) {
+        if (number == 2 && value[i] == maxP_S) {
+            cout << "Номер многоугольника с максимальным периметром: " << i + 1 << endl;
+            cout << "Максимальный периметр: " << maxP_S << "\n" << endl;
+        }
+    }
+
     system("pause");
 }
 
