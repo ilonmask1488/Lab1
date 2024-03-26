@@ -245,7 +245,6 @@ void findMax_A_P(const Right_M* Obj, const int amount, int number)
 {
     double maxP_S = 0.0;
     int amount_max = 0;
-    int *indexA_P = new int [amount];
     double* value = new double[amount];
     if (number == 2)
     {
@@ -268,27 +267,19 @@ void findMax_A_P(const Right_M* Obj, const int amount, int number)
             maxP_S = value[i];
         }
     }
-    for (int i = 0; i < amount; i++)
-    {
-        if (value[i] == maxP_S)
-        {
-            indexA_P[amount_max] = i;
-            amount_max++;
-        }
-    }
     for (int i = 0; i < amount; i++) {
         if (number == 1 && value[i] == maxP_S) {
             cout << "Номер многоугольника с максимальной площадью: " << i + 1 << endl;
             cout << "Максимальная площадь: " << maxP_S << "\n" << endl;
         }
     }
-    for (int i = 0; i < amount_max; i++) {
+    for (int i = 0; i < amount; i++) {
         if (number == 2 && value[i] == maxP_S) {
             cout << "Номер многоугольника с максимальным периметром: " << i + 1 << endl;
             cout << "Максимальный периметр: " << maxP_S << "\n" << endl;
         }
     }
-
+    delete [] value;
     system("pause");
 }
 
