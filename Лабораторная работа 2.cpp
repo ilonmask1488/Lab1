@@ -163,7 +163,95 @@ public:
 
 TransportVehicle::TransportVehicle(int Amount_Vehicles, TransportVehicle* vehicles)
 {
+	for (int i = 0; i < Amount_Vehicles; i++)
+	{
+		int amount_wheels;
+		double mileage;
+		double Tank_capacity;
+		double Engine_power;
+		double Travel_time;
+		char Title[100];
+		cout << "" << endl;
+		cin >> Title;
+		vehicles[i].set_Title(Title);
+		cout << "" << endl;
+		cin >> Amount_Vehicles;
+		while (cin.fail()) {
+			ignoreline();
+			cout << " " << endl;
+			cin >> amount_wheels;
+		}
+		vehicles[i].set_Wheels(amount_wheels);
+		cout << "" << endl;
+		cin >> mileage;
+		while (cin.fail()) {
+			ignoreline();
+			cout << "" << endl;
+			cin >> mileage;
+		}
+		vehicles[i].set_mileage(mileage);
+		cout << "" << endl;
+		cin >> Tank_capacity;
+		while (cin.fail()) {
+			ignoreline();
+			cout << "" << endl;
+			cin >> Tank_capacity;
+		}
+		vehicles[i].set_Tank_capacity(Tank_capacity);
+		cout << "" << endl;
+		cin >> Engine_power;
+		while (cin.fail()) {
+			ignoreline();
+			cout << "" << endl;
+			cin >> Engine_power;
+		}
+		vehicles[i].set_Engine_power(Engine_power);
+		cout << "" << endl;
+		cin >> Travel_time;
+		while (cin.fail()) {
+			ignoreline();
+			cout << "" << endl;
+			cin >> Travel_time;
+		}
+		vehicles[i].set_Travel_time(Travel_time);
+		cout << endl;
+	}
+}
 
+void ignoreline()
+{
+	cin.clear();
+	cin.ignore();
+}
+
+void print_menu()
+{
+	system("cls"); // очищает экран
+	cout << "Какое действие хотите совершить?" << endl;
+	cout << "1. Внести данные о транспортном средстве" << endl;
+	cout << "2. Посмотреть данные о транспортных средствах" << endl;
+	cout << "3. Ввести протяженность трассы" << endl;
+	cout << "4. Произвести расчет прохождения трассы" << endl;
+	cout << "5. Вывод результатов прохождения трассы" << endl; // должно появляться после расчетов
+	cout << "6. Выход" << endl;
+	cout << "> ";
+}
+
+int Get_Variant() {
+	int number;
+	string userInput;
+	while (true) {
+		getline(cin, userInput);
+		stringstream ss(userInput);
+
+		if (ss >> number) {
+			break;
+		}
+		else {
+			cout << "Ошибка! Пожалуйста, введите число." << endl;
+		}
+	}
+	return number;
 }
 
 int main() {
