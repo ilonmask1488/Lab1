@@ -5,30 +5,32 @@
 using namespace std;
 
 class TransportVehicle {
-private:
-	int Kolcol;
+	int amount_wheels;
 	double mileage;
-	int Tank_capacity;
+	double Tank_capacity;
 	double Engine_power;
 	double Travel_time;
-	string Title;
-	double Speed;
-	double Eat;
+	char Title[100];
 
 public:
+	
+	double Speed;
+	double fuel_Consumption;
 
-	void set_Kolcol(int wheels) {
-		Kolcol = wheels;
+	TransportVehicle(int Amount_Vehicles, Vehicle* vehicle);
+
+	void set_Wheels(int wheels) {
+		amount_wheels = wheels;
 	}
-
+	
 	int get_Kolcol() {
-		return Kolcol;
+		return amount_wheel;
 	}
 
 	void set_mileage(double M_mileage) {
 		mileage = M_mileage;
 	}
-
+	
 	double get_mileage() {
 		return mileage;
 	}
@@ -41,12 +43,15 @@ public:
 		return Tank_capacity;
 	}
 
-	void set_Title(string name_of_car) {
-		Title = name_of_car;
+	void set_Title(char name_of_car[100]) {
+		strcpy(Title, name_of_car);
 	}
 
-	string get_Title() {
-		return Title;
+	char get_Title() {
+		for (int i = 0; i < 100; i++) {
+			cout << Title[i];
+		}
+		return 0;
 	}
 
 	void set_Engine_power(double power) {
@@ -65,58 +70,13 @@ public:
 		return Travel_time;
 	}
 
-	void set_Speed(double v) {
-		Speed = v;
-	}
-
-	double get_Speed() {
-		return Speed;
-	}
-
-	void set_Eat(double eat_engine) {
-		Eat = eat_engine;
-	}
-
-	double get_Eat() {
-		return Eat;
-	}
-
 };
 
 int main() {
 	setlocale(LC_ALL, "Russian");
 	TransportVehicle car;
 	string name;
-	int Kolcol;
-	double mileage;
-	int Tank_capacity;
-	double Engine_power;
-	double Travel_time;
-	double Speed;
-	double Eat;
-	
-	
-	cout << "Введите название вашей чудо машины: " << endl;
 	getline(cin, name);
-	car.set_Title(name);
-
-	cout << "Введите количество колёс: " << endl;
-	cin >> Kolcol;
-	car.set_Kolcol(Kolcol);
-
-	cout << "Введите значение пробега: " << endl;
-	cin >> mileage;
-	car.set_mileage(mileage);
-
-	cout << "Введите объем бака: " << endl;
-	cin >> Tank_capacity;
-	car.set_Tank_capacity(Tank_capacity);
-	
-	cout << "Введите мощность двигателя: " << endl;
-	cin >> Engine_power;
-	car.set_Engine_power(Engine_power);
-
-	
 
 
 
