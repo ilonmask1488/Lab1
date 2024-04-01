@@ -24,8 +24,8 @@ public:
 		amount_wheels = wheels;
 	}
 	
-	int get_Kolcol() {
-		return amount_wheel;
+	int get_Wheels() {
+		return amount_wheels;
 	}
 
 	void set_mileage(double M_mileage) {
@@ -81,7 +81,7 @@ public:
 
 	void Detetmination_speed(int Amount_Vehicles, TransportVehicle* vehicle)
 	{
-		for (int i = 0; i < amount; i++)
+		for (int i = 0; i < Amount_Vehicles; i++)
 		{
 			vehicle[i].Speed = sqrt(vehicle[i].Engine_power) * ((70 / vehicle[i].amount_wheels) - 2.5);
 		}
@@ -171,48 +171,29 @@ TransportVehicle::TransportVehicle(int Amount_Vehicles, TransportVehicle* vehicl
 		double Engine_power;
 		double Travel_time;
 		char Title[100];
-		cout << "" << endl;
+
+		cout << "Введите название вашего транспортного средства " << endl;
 		cin >> Title;
 		vehicles[i].set_Title(Title);
-		cout << "" << endl;
-		cin >> Amount_Vehicles;
-		while (cin.fail()) {
-			ignoreline();
-			cout << " " << endl;
-			cin >> amount_wheels;
-		}
+
+		cout << "Введите количество колёс" << endl;
+		amount_wheels = Get_Variant();
 		vehicles[i].set_Wheels(amount_wheels);
-		cout << "" << endl;
-		cin >> mileage;
-		while (cin.fail()) {
-			ignoreline();
-			cout << "" << endl;
-			cin >> mileage;
-		}
+
+		cout << "Введите пробег " << endl;
+		mileage = Get_Variant();
 		vehicles[i].set_mileage(mileage);
-		cout << "" << endl;
-		cin >> Tank_capacity;
-		while (cin.fail()) {
-			ignoreline();
-			cout << "" << endl;
-			cin >> Tank_capacity;
-		}
+
+		cout << "Введите объём резервуара " << endl;
+		Tank_capacity = Get_Variant();
 		vehicles[i].set_Tank_capacity(Tank_capacity);
-		cout << "" << endl;
-		cin >> Engine_power;
-		while (cin.fail()) {
-			ignoreline();
-			cout << "" << endl;
-			cin >> Engine_power;
-		}
+
+		cout << "Введите мощность " << endl;
+		Engine_power = Get_Variant();
 		vehicles[i].set_Engine_power(Engine_power);
-		cout << "" << endl;
-		cin >> Travel_time;
-		while (cin.fail()) {
-			ignoreline();
-			cout << "" << endl;
-			cin >> Travel_time;
-		}
+
+		cout << "Введите время в пути в часах " << endl;
+		Travel_time = Get_Variant();
 		vehicles[i].set_Travel_time(Travel_time);
 		cout << endl;
 	}
@@ -257,11 +238,12 @@ int Get_Variant() {
 int main() {
 	setlocale(LC_ALL, "Russian");
 
+	int Amount_Vehicles;
+	int Lenght_ofthe_Track = 0;
+	cout << "Введите предполагаемое количесвто ваших транспортных средств " << endl;
+	Amount_Vehicles = Get_Variant();
+	TransportVehicle* vehicles = new TransportVehicle[Amount_Vehicles];
 
-
-	getline(cin, name);
-
-
-
+	delete[] vehicles;
 	return 0;
 }
