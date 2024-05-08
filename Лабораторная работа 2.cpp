@@ -70,7 +70,7 @@ public:
 
 	friend void Showfuelcons(int Amount_Vehicles, TransportVehicle* vehicles, int i)
 	{
-		cout << "Расход топлива" << vehicles[i].fuel_Consumption << endl;
+		cout << "Расход топлива: " << vehicles[i].fuel_Consumption << endl;
 	}
 
 	TransportVehicle()
@@ -98,7 +98,7 @@ void PrintRaceResults(int amount_vehicles, string* name_v, double* time_of_the_r
 		cout << "Время в пути:" << (int)time_of_the_race[i] << " часов" << endl;
 		cout << (int)((time_of_the_race[i] - (int)time_of_the_race[i]) * 60) << " минут" << endl;
 		cout << (int)(time_of_the_race[i] * 3600 - (int)(time_of_the_race[i]) * 3600 - (int)((time_of_the_race[i] - (int)time_of_the_race[i]) * 60) * 60) << " секунд" << endl;
-		cout << "Amount_refuelings: " << num_refuelings[i] << endl;
+		cout << "Количество дозаправок: " << num_refuelings[i] << endl;
 	}
 }
 
@@ -330,6 +330,7 @@ int main() {
 	int Amount_Vehicles;
 	int Lenght_ofthe_Track = 0;
 	cout << "Введите количесвто транспортных средств " << endl;
+	cin >> Amount_Vehicles;
 	while (cin.fail()) {
 		ignoreLine();
 		cout << "Вы ввели символ, пожалуйста, введите число" << endl;
