@@ -7,7 +7,6 @@
 
 using namespace std;
 
-int Get_Variant();
 void print_menu();
 
 class TransportVehicle {
@@ -281,7 +280,7 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, int lenght_of_the_tra
 			system("cls");
 			if (car == 0)
 			{
-				cout << "Во-первых, введите транспортное средство!\n";
+				cout << "Во-первых, введите транспортное средство!" << endl;
 				break;
 			}
 			output(amount_vehicles, vehicles);
@@ -290,7 +289,7 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, int lenght_of_the_tra
 			system("cls");
 			if (car == 0)
 			{
-				cout << "Во-первых, введите транспортное средство!\n";
+				cout << "Во-первых, введите транспортное средство!" << endl;
 				break;
 			}
 			cout << "Введите длину трассы: ";
@@ -300,7 +299,7 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, int lenght_of_the_tra
 		case 4:
 			if (lenght_of_the_track == 0)
 			{
-				cout << "ВВЕДИТЕ ДЛИНУ ТРАССЫ, прежде чем определить её!" << "\n";
+				cout << "ВВЕДИТЕ ДЛИНУ ТРАССЫ, прежде чем определить её!" << endl;
 				break;
 			}
 			system("cls");
@@ -351,23 +350,6 @@ int main() {
 
 	delete[] vehicles;
 	return 0;
-}
-
-int Get_Variant() {
-	double number;
-	string userInput;
-	while (true) {
-		getline(cin, userInput);
-		stringstream ss(userInput);
-
-		if (ss >> number) {
-			break;
-		}
-		else {
-			cout << "Ошибка! Пожалуйста, введите число." << endl;
-		}
-	}
-	return number;
 }
 
 void print_menu()
