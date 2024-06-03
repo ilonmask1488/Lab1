@@ -91,13 +91,14 @@ int Get_Variant() {
 	getline(cin, userInput);
 	stringstream ss(userInput);
 	while (true) {
+		cout << "Введите число: " << endl;
 		getline(cin, userInput);
 		stringstream ss(userInput);
-		if (ss >> number) {
+		if (ss >> number && number > 0) {
 			break;
 		}
 		else {
-			cout << "Ошибка! Пожалуйста, введите число." << endl;
+			cout << "Ошибка! Пожалуйста, введите допустимое значение." << endl;
 		}
 	}
 	return number;
@@ -303,18 +304,8 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, int lenght_of_the_tra
 				cout << "Во-первых, введите транспортное средство!" << endl;
 				break;
 			}
-			cout << "Введите длину трассы: ";
+			cout << "Введите длину трассы: " << endl;
 			lenght_of_the_track = Get_Variant();
-			while (true) {
-				if (lenght_of_the_track > 0) {
-					break;
-				}
-				else {
-					cout << "Введите значение, большее нуля" << endl;
-					lenght_of_the_track = Get_Variant();
-				}
-			}
-
 			break;
 		case 4:
 			if (lenght_of_the_track == 0)
