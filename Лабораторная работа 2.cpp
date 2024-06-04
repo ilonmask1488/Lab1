@@ -1,6 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS 1
 #include <iostream>
-#include <locale.h> 
+#include <locale.h>
 #include <string>
 #include <cmath>
 #include <sstream>
@@ -34,8 +34,8 @@ public:
 	double Get_power() { return Engine_power; }
 	void Set_travel_time(double Travel_time) { this->Travel_time = Travel_time; }
 	double Get_travel_time() { return Travel_time; }
-	void Set_num(int num_refuelings) { this->num_refuelings = num_refuelings; }
-	int Get_num() { return num_refuelings; }
+	void Set_num_refuelings(int num_refuelings) { this->num_refuelings = num_refuelings; }
+	int Get_num_refuelings() { return num_refuelings; }
 	void Set_Time_race(double time_of_the_race) { this->time_of_the_race = time_of_the_race; }
 	double Get_Time_race() { return time_of_the_race; }
 
@@ -52,7 +52,7 @@ public:
 		cout << "Скорость: " << vehicles[i].Speed << endl;
 	}
 
-	double Get_speed() 
+	double Get_speed()
 	{
 		return Speed;
 	}
@@ -65,7 +65,7 @@ public:
 		}
 	}
 
-	double Get_fuel_consumption() 
+	double Get_fuel_consumption()
 	{
 		return fuel_Consumption;
 	}
@@ -115,7 +115,7 @@ void PrintRaceResults(int amount_vehicles, string* name_v, TransportVehicle* veh
 
 		cout << "Время в пути: " << hours << " часов " << minutes << " минут " << seconds << " секунд" << endl;
 
-		cout << "Количество дозаправок: " << vehicles[i].Get_num() << endl;
+		cout << "Количество дозаправок: " << vehicles[i].Get_num_refuelings() << endl;
 	}
 }
 
@@ -125,16 +125,16 @@ void Determination_track(int length_of_the_track, TransportVehicle* vehicles, in
 		int num_refuelings;
 		double time_of_the_race;
 		num_refuelings = (int)(((length_of_the_track / 100) * vehicles[i].Get_fuel_consumption()) / vehicles[i].Get_volume_tank());
-		vehicles[i].Set_num(num_refuelings); 
+		vehicles[i].Set_num_refuelings(num_refuelings);
 		time_of_the_race = (double)(length_of_the_track) / vehicles[i].Get_speed();
-		vehicles[i].Set_Time_race(time_of_the_race); 
+		vehicles[i].Set_Time_race(time_of_the_race);
 	}
 
 
 	string* name_v = new string[amount_vehicles];
 	for (int j = 0; j < amount_vehicles; ++j)
 	{
-		name_v[j] = vehicles[j].Get_name(); 
+		name_v[j] = vehicles[j].Get_name();
 	}
 
 	for (int i = 0; i < amount_vehicles - 1; ++i)
@@ -145,9 +145,9 @@ void Determination_track(int length_of_the_track, TransportVehicle* vehicles, in
 			vehicles[i].Set_Time_race(vehicles[i + 1].Get_Time_race());
 			vehicles[i + 1].Set_Time_race(temp);
 
-			int temp_refuelings = vehicles[i].Get_num();
-			vehicles[i].Set_num(vehicles[i + 1].Get_num());
-			vehicles[i + 1].Set_num(temp_refuelings);
+			int temp_refuelings = vehicles[i].Get_num_refuelings();
+			vehicles[i].Set_num_refuelings(vehicles[i + 1].Get_num_refuelings());
+			vehicles[i + 1].Set_num_refuelings(temp_refuelings);
 
 			string temp_name = name_v[i];
 			name_v[i] = name_v[i + 1];
@@ -155,11 +155,11 @@ void Determination_track(int length_of_the_track, TransportVehicle* vehicles, in
 		}
 		else if (vehicles[i].Get_Time_race() == vehicles[i + 1].Get_Time_race())
 		{
-			if (vehicles[i].Get_num() > vehicles[i + 1].Get_num())
+			if (vehicles[i].Get_num_refuelings() > vehicles[i + 1].Get_num_refuelings())
 			{
-				int temp_refuelings = vehicles[i].Get_num();
-				vehicles[i].Set_num(vehicles[i + 1].Get_num());
-				vehicles[i + 1].Set_num(temp_refuelings);
+				int temp_refuelings = vehicles[i].Get_num_refuelings();
+				vehicles[i].Set_num_refuelings(vehicles[i + 1].Get_num_refuelings());
+				vehicles[i + 1].Set_num_refuelings(temp_refuelings);
 
 				string temp_name = name_v[i];
 				name_v[i] = name_v[i + 1];
@@ -232,7 +232,7 @@ TransportVehicle::TransportVehicle(int Amount_Vehicles, TransportVehicle* vehicl
 		do
 		{
 			if (power <= 0)
-			{ 
+			{
 				cout << "Ошибка! Повторите попытку (мощность > 0)" << endl;
 				cin >> power;
 			}
@@ -346,7 +346,7 @@ int main() {
 		cout << "Вы ввели символ, пожалуйста, введите число" << endl;
 		cin >> Amount_Vehicles;
 	}
-	do 
+	do
 	{
 		if (Amount_Vehicles <= 0)
 		{
