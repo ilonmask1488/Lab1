@@ -5,6 +5,8 @@
 #include <cmath>
 #include <sstream>
 #include <cstdlib>
+#include <vector>
+
 
 using namespace std;
 
@@ -53,7 +55,7 @@ void ignoreLine()
 	cin.ignore();
 }
 
-class TransportVehicle: public Engine, public Fuel_system {
+class TransportVehicle : public Engine, public Fuel_system {
 	string Title;
 	int amount_wheels;
 	double mileage;
@@ -125,11 +127,11 @@ public:
 	int Get_num_refuelings() { return num_refuelings; }
 	void Set_Time_race(double time_of_the_race) { this->time_of_the_race = time_of_the_race; }
 	double Get_Time_race() { return time_of_the_race; }\
-	int count_refueling(double lenght_of_the_track, int amount_vehicles, TransportVehicle* vehicles, int i, double power) {
+		int count_refueling(double lenght_of_the_track, int amount_vehicles, TransportVehicle* vehicles, int i, double power) {
 		int num_refuelings;
 		num_refuelings = (int)(((lenght_of_the_track / 100) * vehicles[i].get_eng_consumption()) / vehicles[i].Volume_tank);
-        return num_refuelings;
-    }
+		return num_refuelings;
+	}
 
 	void after_track(double mileage) {
 		for (int i = 0; i < amount_wheels; i++) {
@@ -138,31 +140,31 @@ public:
 	}
 
 	friend ostream& operator<<(std::ostream& os, const TransportVehicle& vehicle) {
-		os << "Vehicle: " << vehicle.Title << "\n";
-		os << "Number of wheels: " << vehicle.amount_wheels << "\n";
-		os << "Mileage: " << vehicle.wheels->get_mileage_wheel() << "\n";
-		os << "Wheel status:\n";
+		os << "Название: " << vehicle.Title << "\n";
+		os << "Количество колёс: " << vehicle.amount_wheels << "\n";
+		os << "Пробег: " << vehicle.wheels->get_mileage_wheel() << "\n";
+		os << "Состояние колеса:\n";
 		for (int i = 0; i < vehicle.amount_wheels; i++) {
-			os << "Wheel " << i + 1 << ": ";
+			os << "Колеса " << i + 1 << ": ";
 			if (vehicle.wheels[i].status == 1) {
-				os << "Broken\n";
+				os << "Сломано\n";
 			}
 			else if (vehicle.wheels[i].status == 0) {
-				os << "Good condition\n";
+				os << "Хорошее состояние\n";
 			}
 			else {
 			}
 		}
-		os << "Volume tank: " << vehicle.Volume_tank << "\n";
-		os << "Current volume: " << vehicle.Current_volume << "\n";
-		os << "Engine consumption: " << vehicle.engine_consumption << "\n";
-		os << "Speed: " << vehicle.Speed << "\n\n";
+		os << "Объем резервуара: " << vehicle.Volume_tank << "\n";
+		os << "Текущий объем: " << vehicle.Current_volume << "\n";
+		os << "Расход топлива двигателя: " << vehicle.engine_consumption << "\n";
+		os << "Скорость: " << vehicle.Speed << "\n\n";
 		return os;
 	}
 
 	friend void Determination_track(double lenght_of_the_track, TransportVehicle* vehicles, int amount_vehicles, double power)
 	{
-		string* name_v = new string[amount_vehicles];
+		vector<string> name_v(amount_vehicles);
 		for (int i = 0; i < amount_vehicles; i++) {
 			int num_refuelings;
 			double time_of_the_race;
@@ -209,16 +211,16 @@ public:
 		{
 			vehicles[i].PrintRaceResults(amount_vehicles, name_v, vehicles);
 		}
-		delete[] name_v;
 	}
-	void PrintRaceResults(int amount_vehicles, string* name_v, TransportVehicle* vehicles) {
+
+	void PrintRaceResults(int amount_vehicles, const vector<string>& name_v, TransportVehicle* vehicles) {
 		cout << "Определение завершено!" << endl;
 		for (int i = 0; i < amount_vehicles; i++) {
 			cout << "Транспорт: " << name_v[i] << endl;
 
-			int hours = (int)(vehicles[i].Get_Time_race());
-			int minutes = (int)((vehicles[i].Get_Time_race() - hours) * 60);
-			int seconds = (int)((vehicles[i].Get_Time_race() * 3600) - (hours * 3600) - (minutes * 60));
+			int hours = static_cast<int>(vehicles[i].Get_Time_race());
+			int minutes = static_cast<int>((vehicles[i].Get_Time_race() - hours) * 60);
+			int seconds = static_cast<int>((vehicles[i].Get_Time_race() * 3600) - (hours * 3600) - (minutes * 60));
 
 			cout << "Время в пути: " << hours << " часов " << minutes << " минут " << seconds << " секунд" << endl;
 
@@ -254,27 +256,6 @@ void Wheel_mileage(TransportVehicle* vehicles, int amount_vehicles, double lengt
 	}
 }
 
-void new_page()
-{
-	for (int i = 0; i < 100; ++i)
-	{
-		cout << "\n";
-	}
-}
-
-//void output(int amount_vehicles, TransportVehicle* vehicles)
-//{
-//	for (int i = 0; i < amount_vehicles; i++)
-//	{
-//		cout << "Название: " << vehicles[i].Get_name() << endl;
-//		cout << "Количество колёс: " << vehicles[i].Get_amount_wheels() << endl;
-//		ShowSpeed(amount_vehicles, vehicles, i);
-//		cout << "Объем резервуара: " << vehicles[i].Get_volume_tank() << endl;
-//		Showfuelcons(amount_vehicles, vehicles, i);
-//		cout << "Мощность: " << vehicles[i].Get_power() << endl;
-//	}
-//}
-
 void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_track, string vehicle_name, int amount_wheels, double power)
 {
 	int choice;
@@ -302,7 +283,6 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 		{
 		case 1:
 			system("cls");
-			new_page();
 			for (int i = 0; i < amount_vehicles; ++i)
 			{
 				string vehicle_name;
@@ -406,7 +386,7 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 
 int main() {
 	setlocale(LC_ALL, "Russian");
-	string Transportv_name = 0;
+	string Transportv_name;
 	double power = 0;
 	int Amount_Vehicles;
 	int Lenght_ofthe_Track = 0;
