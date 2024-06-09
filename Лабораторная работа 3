@@ -13,7 +13,7 @@ using namespace std;
 class Wheel {
 public:
 	double mileage_wheel;
-	int status;
+	bool status;
 	Wheel() { status = 0; mileage_wheel = 0; };
 	double get_mileage_wheel() {
 		return mileage_wheel;
@@ -107,7 +107,7 @@ public:
 				cin >> Volume_tank;
 			}
 		} while (Volume_tank <= 0);
-
+		cout << endl;
 		Current_volume = Volume_tank;
 		engine_consumption = calculating_consumption(power);
 		determination_speed();
@@ -145,7 +145,7 @@ public:
 		os << "Пробег: " << vehicle.wheels->get_mileage_wheel() << "\n";
 		os << "Состояние колеса:\n";
 		for (int i = 0; i < vehicle.amount_wheels; i++) {
-			os << "Колеса " << i + 1 << ": ";
+			os << "Колесо " << i + 1 << ": ";
 			if (vehicle.wheels[i].status == 1) {
 				os << "Сломано\n";
 			}
@@ -209,23 +209,21 @@ public:
 		}
 		for (int i = 0; i < amount_vehicles; i++)
 		{
-			vehicles[i].PrintRaceResults(amount_vehicles, name_v, vehicles);
+			vehicles[i].PrintRaceResults(amount_vehicles, name_v, vehicles, i);
 		}
 	}
 
-	void PrintRaceResults(int amount_vehicles, const vector<string>& name_v, TransportVehicle* vehicles) {
+	void PrintRaceResults(int amount_vehicles, const vector<string>& name_v, TransportVehicle* vehicles, int i) {
 		cout << "Определение завершено!" << endl;
-		for (int i = 0; i < amount_vehicles; i++) {
-			cout << "Транспорт: " << name_v[i] << endl;
+		cout << "Транспорт: " << name_v[i] << endl;
 
-			int hours = static_cast<int>(vehicles[i].Get_Time_race());
-			int minutes = static_cast<int>((vehicles[i].Get_Time_race() - hours) * 60);
-			int seconds = static_cast<int>((vehicles[i].Get_Time_race() * 3600) - (hours * 3600) - (minutes * 60));
+		int hours = static_cast<int>(vehicles[i].Get_Time_race());
+		int minutes = static_cast<int>((vehicles[i].Get_Time_race() - hours) * 60);
+		int seconds = static_cast<int>((vehicles[i].Get_Time_race() * 3600) - (hours * 3600) - (minutes * 60));
 
-			cout << "Время в пути: " << hours << " часов " << minutes << " минут " << seconds << " секунд" << endl;
+		cout << "Время в пути: " << hours << " часов " << minutes << " минут " << seconds << " секунд" << endl;
 
-			cout << "Количество дозаправок: " << vehicles[i].Get_num_refuelings() << endl;
-		}
+		cout << "Количество дозаправок: " << vehicles[i].Get_num_refuelings() << endl;
 	}
 };
 
@@ -287,13 +285,14 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 			{
 				string vehicle_name;
 				int wheels;
+				cout << "Машина №" << i + 1 << endl;
 				cout << "Введите название вашей машины: " << endl;
 				cin >> vehicle_name;
 				cout << "Введите количество колёс: " << endl;
 				cin >> wheels;
 				while (cin.fail()) {
 					ignoreLine();
-					cout << "Вы ввели символ, пожалуйста, введите числ" << endl;
+					cout << "Вы ввели символ, пожалуйста, введите число" << endl;
 					cin >> wheels;
 				}
 				do
@@ -332,6 +331,7 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 			lenght_of_the_track = Get_Variant();
 			break;
 		case 4:
+
 			if (lenght_of_the_track == 0)
 			{
 				cout << "Введите длину трассы, прежде чем определить её!" << endl;
