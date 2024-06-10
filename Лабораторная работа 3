@@ -6,6 +6,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <vector>
+#include <ctime>
 
 
 using namespace std;
@@ -275,7 +276,7 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 	int exit_menu = 0;
 	int determination_complete = 0;
 	int car = 0;
-	double mil = 0;
+	double temp = 0;
 	string Prov;
 
 	while (exit_menu == 0)
@@ -352,7 +353,7 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 			Determination_track(lenght_of_the_track, vehicles, amount_vehicles, power);
 			determination_complete++;
 			Wheel_mileage(vehicles, amount_vehicles, lenght_of_the_track);
-			mil = mil + lenght_of_the_track;
+			temp = temp + lenght_of_the_track;
 			for (int k = 0; k < amount_vehicles; ++k)
 			{
 				for (int j = 0; j < vehicles[k].get_amount_wheels(); ++j)
@@ -360,7 +361,7 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 					if (vehicles[k].wheels[j].status == 0)
 					{
 						for (int i = 0; i < amount_vehicles; ++i) {
-							vehicles[i].after_track(mil);
+							vehicles[i].after_track(temp);
 						}
 					}
 				}
@@ -407,6 +408,7 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 
 int main() {
 	setlocale(LC_ALL, "Russian");
+	srand(time(NULL));
 	string Transportv_name;
 	double power = 0;
 	int Amount_Vehicles;
