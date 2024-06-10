@@ -10,6 +10,34 @@
 
 using namespace std;
 
+bool Proverka(const string& input) {
+	for (int i = 0; i < input.length(); i++) {
+		if (!isdigit(input[i])) {
+			return false;
+		}
+	}
+	return true;
+}
+
+int Get_Variant() {
+	int number;
+	string userInput;
+	getline(cin, userInput);
+	stringstream ss(userInput);
+	while (true) {
+		cout << "Введите число: " << endl;
+		getline(cin, userInput);
+		stringstream ss(userInput);
+		if (ss >> number && number > 0) {
+			break;
+		}
+		else {
+			cout << "Ошибка! Пожалуйста, введите допустимое значение." << endl;
+		}
+	}
+	return number;
+}
+
 class Wheel {
 public:
 	double mileage_wheel;
@@ -49,64 +77,70 @@ public:
 	}
 };
 
-void ignoreLine()
-{
-	cin.clear();
-	cin.ignore();
-}
-
 class TransportVehicle : public Engine, public Fuel_system {
+	string Vehicle_name;
 	string Title;
 	int amount_wheels;
 	double mileage;
 	double Speed;
 	int num_refuelings;
 	double time_of_the_race;
+	int wheel;
+	string Prov;
 public:
 	int Brokewheels = 0;
 	Wheel* wheels;
 	TransportVehicle() {};
-	TransportVehicle(string Transport_name, int Wheels_1) {
+	TransportVehicle(string Transport_name) {
+		cout << "Машина №" << endl;
+		cout << "Введите название вашей машины: " << endl;
+		cin >> Vehicle_name;
+		cout << "Введите количество колёс: " << endl;
+		cin >> Prov;
+		while (true) {
+			if (Proverka(Prov)) {
+				istringstream(Prov) >> wheel;
+				break;
+			}
+			else {
+				cout << "Введите нормальное число." << std::endl;
+				cin >> Prov;
+			}
+		}
 		set_name(Transport_name);
-		set_amount_wheels(Wheels_1);
-		wheels = new Wheel[Wheels_1];
-		for (int i = 0; i < Wheels_1; i++) {
+		set_amount_wheels(wheel);
+		wheels = new Wheel[wheel];
+		for (int i = 0; i < wheel; i++) {
 			wheels[i] = Wheel();
 		}
 
 		cout << "Введите мощность: " << endl;
-		cin >> power;
-		while (cin.fail()) {
-			ignoreLine();
-			cout << "Вы ввели символ, пожалуйста, введите число" << endl;
-			cin >> power;
-		}
-		do
-		{
-			if (power <= 0)
-			{
-				cout << "Ошибка! Повторите попытку (мощность > 0)" << endl;
-				cin >> power;
+		cin >> Prov;
+		while (true) {
+			if (Proverka(Prov)) {
+				istringstream(Prov) >> power;
+				break;
 			}
-		} while (power <= 0);
+			else {
+				cout << "Введите нормальное число." << std::endl;
+				cin >> Prov;
+			}
+		}
 
 		mileage = 0;
 
 		cout << "Введите объем резервуара: " << endl;
-		cin >> Volume_tank;
-		while (cin.fail()) {
-			ignoreLine();
-			cout << "Вы ввели символ, пожалуйста, введите число" << endl;
-			cin >> Volume_tank;
-		}
-		do
-		{
-			if (Volume_tank <= 0)
-			{
-				cout << "Ошибка! Повторите попытку (объём бака>0)" << endl;
-				cin >> Volume_tank;
+		cin >> Prov;
+		while (true) {
+			if (Proverka(Prov)) {
+				istringstream(Prov) >> Volume_tank;
+				break;
 			}
-		} while (Volume_tank <= 0);
+			else {
+				cout << "Введите нормальное число." << std::endl;
+				cin >> Prov;
+			}
+		}
 		cout << endl;
 		Current_volume = Volume_tank;
 		engine_consumption = calculating_consumption(power);
@@ -223,28 +257,9 @@ public:
 
 		cout << "Время в пути: " << hours << " часов " << minutes << " минут " << seconds << " секунд" << endl;
 
-		cout << "Количество дозаправок: " << vehicles[i].Get_num_refuelings() << endl;
+		cout << "Количество дозаправок: " << vehicles[i].Get_num_refuelings() << "\n" << endl;
 	}
 };
-
-int Get_Variant() {
-	int number;
-	string userInput;
-	getline(cin, userInput);
-	stringstream ss(userInput);
-	while (true) {
-		cout << "Введите число: " << endl;
-		getline(cin, userInput);
-		stringstream ss(userInput);
-		if (ss >> number && number > 0) {
-			break;
-		}
-		else {
-			cout << "Ошибка! Пожалуйста, введите допустимое значение." << endl;
-		}
-	}
-	return number;
-}
 
 void Wheel_mileage(TransportVehicle* vehicles, int amount_vehicles, double length_of_the_track) {
 	for (int i = 0; i < amount_vehicles; i++) {
@@ -261,6 +276,7 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 	int determination_complete = 0;
 	int car = 0;
 	double mil = 0;
+	string Prov;
 
 	while (exit_menu == 0)
 	{
@@ -271,11 +287,16 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 		cout << "4. Вывод результатов прохождения трассы" << endl; // должно появляться после расчетов
 		cout << "5. Выход" << endl;
 		cout << "> ";
-		cin >> choice;
-		while (cin.fail()) {
-			ignoreLine();
-			cout << "Вы ввели символ, пожалуйста, введите число" << endl;
-			cin >> amount_vehicles;
+		cin >> Prov;
+		while (true) {
+			if (Proverka(Prov)) {
+				istringstream(Prov) >> choice;
+				break;
+			}
+			else {
+				cout << "Введите нормальное число." << std::endl;
+				cin >> Prov;
+			}
 		}
 		switch (choice)
 		{
@@ -283,27 +304,7 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 			system("cls");
 			for (int i = 0; i < amount_vehicles; ++i)
 			{
-				string vehicle_name;
-				int wheels;
-				cout << "Машина №" << i + 1 << endl;
-				cout << "Введите название вашей машины: " << endl;
-				cin >> vehicle_name;
-				cout << "Введите количество колёс: " << endl;
-				cin >> wheels;
-				while (cin.fail()) {
-					ignoreLine();
-					cout << "Вы ввели символ, пожалуйста, введите число" << endl;
-					cin >> wheels;
-				}
-				do
-				{
-					if (wheels <= 0)
-					{
-						cout << "Ошибка! Повторите попытку (количество колёс > 0)" << "\n";
-						cin >> wheels;
-					}
-				} while (wheels <= 0);
-				vehicles[i] = TransportVehicle(vehicle_name, wheels);
+				vehicles[i] = TransportVehicle(vehicle_name);
 			}
 			car++;
 			break;
@@ -328,7 +329,17 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 				break;
 			}
 			cout << "Введите длину трассы: " << endl;
-			lenght_of_the_track = Get_Variant();
+			cin >> Prov;
+			while (true) {
+				if (Proverka(Prov)) {
+					istringstream(Prov) >> lenght_of_the_track;
+					break;
+				}
+				else {
+					cout << "Введите нормальное число." << std::endl;
+					cin >> Prov;
+				}
+			}
 			break;
 		case 4:
 
@@ -372,7 +383,17 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 		case 5:
 			system("cls");
 			cout << "Вы уверены, что выходите? 1 - да, 0 - нет\n";
-			cin >> exit_menu;
+			cin >> Prov;
+			while (true) {
+				if (Proverka(Prov)) {
+					istringstream(Prov) >> exit_menu;
+					break;
+				}
+				else {
+					cout << "Введите нормальное число." << std::endl;
+					cin >> Prov;
+				}
+			}
 			if (exit_menu == 1)
 			{
 				return;
@@ -389,13 +410,19 @@ int main() {
 	string Transportv_name;
 	double power = 0;
 	int Amount_Vehicles;
+	string Prov;
 	int Lenght_ofthe_Track = 0;
-	cout << "Введите количесвто транспортных средств " << endl;
-	cin >> Amount_Vehicles;
-	while (cin.fail()) {
-		ignoreLine();
-		cout << "Вы ввели символ, пожалуйста, введите число" << endl;
-		cin >> Amount_Vehicles;
+	cout << "Введите количество транспортных средств " << endl;
+	cin >> Prov;
+	while (true) {
+		if (Proverka(Prov)) {
+			istringstream(Prov) >> Amount_Vehicles;
+			break;
+		}
+		else {
+			cout << "Введите нормальное число." << std::endl;
+			cin >> Prov;
+		}
 	}
 	do 
 	{
