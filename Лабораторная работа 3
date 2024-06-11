@@ -94,7 +94,7 @@ public:
 	Wheel* wheels;
 	TransportVehicle() {};
 	TransportVehicle(string Transport_name) {
-		cout << "Машина №" << endl;
+		cout << "Машина " << endl;
 		cout << "Введите название вашей машины: " << endl;
 		cin >> Vehicle_name;
 		cout << "Введите количество колёс: " << endl;
