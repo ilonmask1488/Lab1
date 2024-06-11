@@ -8,7 +8,6 @@
 #include <vector>
 #include <ctime>
 
-
 using namespace std;
 
 bool Proverka(const string& input) {
@@ -92,11 +91,26 @@ class TransportVehicle : public Engine, public Fuel_system {
 public:
 	int Brokewheels = 0;
 	Wheel* wheels;
+
+	void set_name(string Title) { this->Title = Title; }
+	string get_name() { return Title; }
+	double get_speed() { return Speed; }
+	double get_eng_consumption() { return engine_consumption; }
+	void set_amount_wheels(int amount_wheels) { this->amount_wheels = amount_wheels; }
+	int get_amount_wheels() { return amount_wheels; }
+	double get_vol_tank() { return Volume_tank; }
+	void Set_num_refuelings(int num_refuelings) { this->num_refuelings = num_refuelings; }
+	int Get_num_refuelings() { return num_refuelings; }
+	void Set_Time_race(double time_of_the_race) { this->time_of_the_race = time_of_the_race; }
+	double Get_Time_race() { return time_of_the_race; }
+
 	TransportVehicle() {};
 	TransportVehicle(string Transport_name) {
+		
 		cout << "Машина " << endl;
 		cout << "Введите название вашей машины: " << endl;
-		cin >> Vehicle_name;
+		cin >> Title;
+		set_name(Title);
 		cout << "Введите количество колёс: " << endl;
 		cin >> Prov;
 		while (true) {
@@ -109,7 +123,6 @@ public:
 				cin >> Prov;
 			}
 		}
-		set_name(Transport_name);
 		set_amount_wheels(wheel);
 		wheels = new Wheel[wheel];
 		for (int i = 0; i < wheel; i++) {
@@ -151,17 +164,6 @@ public:
 	void determination_speed() {
 		Speed = abs((sqrt(power) * ((70 / (amount_wheels)) - 2.5)) / pow(2, Brokewheels));
 	}
-	void set_name(string Title) { this->Title = Title; }
-	string get_name() { return Title; }
-	double get_speed() { return Speed; }
-	double get_eng_consumption() { return engine_consumption; }
-	void set_amount_wheels(int amount_wheels) { this->amount_wheels = amount_wheels; }
-	int get_amount_wheels() { return amount_wheels; }
-	double get_vol_tank() { return Volume_tank; }
-	void Set_num_refuelings(int num_refuelings) { this->num_refuelings = num_refuelings; }
-	int Get_num_refuelings() { return num_refuelings; }
-	void Set_Time_race(double time_of_the_race) { this->time_of_the_race = time_of_the_race; }
-	double Get_Time_race() { return time_of_the_race; }
 
 	int count_refueling (double lenght_of_the_track, int amount_vehicles, TransportVehicle* vehicles, int i, double power) {
 		int num_refuelings;
