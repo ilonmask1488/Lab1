@@ -124,6 +124,7 @@ public:
 			}
 		}
 		set_amount_wheels(wheel);
+
 		wheels = new Wheel[wheel];
 		for (int i = 0; i < wheel; i++) {
 			wheels[i] = Wheel();
@@ -215,33 +216,25 @@ public:
 		{
 			name_v[i] = vehicles[i].get_name();
 		}
-		for (int i = 0; i < amount_vehicles - 1; ++i)
+		for (int i = 0; i < 1; ++i)
 		{
-			if (vehicles[i].Get_Time_race() > vehicles[i + 1].Get_Time_race())
+			for (int j = 0; j < amount_vehicles - i - 1; ++j)
 			{
-				double temp = vehicles[i].Get_Time_race();
-				vehicles[i].Set_Time_race(vehicles[i + 1].Get_Time_race());
-				vehicles[i + 1].Set_Time_race(temp);
-
-				int temp_refuelings = vehicles[i].Get_num_refuelings();
-				vehicles[i].Set_num_refuelings(vehicles[i + 1].Get_num_refuelings());
-				vehicles[i + 1].Set_num_refuelings(temp_refuelings);
-
-				string temp_name = name_v[i];
-				name_v[i] = name_v[i + 1];
-				name_v[i + 1] = temp_name;
-			}
-			else if (vehicles[i].Get_Time_race() == vehicles[i + 1].Get_Time_race())
-			{
-				if (vehicles[i].Get_num_refuelings() > vehicles[i + 1].Get_num_refuelings())
+				if (vehicles[j].Get_Time_race() > vehicles[j + 1].Get_Time_race() ||
+					(vehicles[j].Get_Time_race() == vehicles[j + 1].Get_Time_race() &&
+						vehicles[j].Get_num_refuelings() > vehicles[j + 1].Get_num_refuelings()))
 				{
-					int temp_refuelings = vehicles[i].Get_num_refuelings();
-					vehicles[i].Set_num_refuelings(vehicles[i + 1].Get_num_refuelings());
-					vehicles[i + 1].Set_num_refuelings(temp_refuelings);
+					double temp = vehicles[j].Get_Time_race();
+					vehicles[j].Set_Time_race(vehicles[j + 1].Get_Time_race());
+					vehicles[j + 1].Set_Time_race(temp);
 
-					string temp_name = name_v[i];
-					name_v[i] = name_v[i + 1];
-					name_v[i + 1] = temp_name;
+					int temp_refuelings = vehicles[j].Get_num_refuelings();
+					vehicles[j].Set_num_refuelings(vehicles[j + 1].Get_num_refuelings());
+					vehicles[j + 1].Set_num_refuelings(temp_refuelings);
+
+					string temp_name = name_v[j];
+					name_v[j] = name_v[j + 1];
+					name_v[j + 1] = temp_name;
 				}
 			}
 		}
@@ -263,6 +256,7 @@ public:
 
 		cout << "Количество дозаправок: " << vehicles[i].Get_num_refuelings() << "\n" << endl;
 	}
+
 };
 
 void Wheel_mileage(TransportVehicle* vehicles, int amount_vehicles, double length_of_the_track) {
@@ -337,7 +331,13 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 			while (true) {
 				if (Proverka(Prov)) {
 					istringstream(Prov) >> lenght_of_the_track;
-					break;
+					if (lenght_of_the_track > 0) {
+						break;
+					}
+					else {
+						cout << "Введите нормальное число." << std::endl;
+						cin >> Prov;
+					}
 				}
 				else {
 					cout << "Введите нормальное число." << std::endl;
