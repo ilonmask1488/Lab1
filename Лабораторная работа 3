@@ -257,6 +257,10 @@ public:
 		cout << "Количество дозаправок: " << vehicles[i].Get_num_refuelings() << "\n" << endl;
 	}
 
+	void clearWheelsMemory() {
+		delete[] wheels;
+	}
+
 };
 
 void Wheel_mileage(TransportVehicle* vehicles, int amount_vehicles, double length_of_the_track) {
@@ -335,12 +339,12 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 						break;
 					}
 					else {
-						cout << "Введите нормальное число." << std::endl;
+						cout << "Введите нормальное число." << endl;
 						cin >> Prov;
 					}
 				}
 				else {
-					cout << "Введите нормальное число." << std::endl;
+					cout << "Введите нормальное число." << endl;
 					cin >> Prov;
 				}
 			}
@@ -394,12 +398,13 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 					break;
 				}
 				else {
-					cout << "Введите нормальное число." << std::endl;
+					cout << "Введите нормальное число." << endl;
 					cin >> Prov;
 				}
 			}
 			if (exit_menu == 1)
 			{
+				vehicles->clearWheelsMemory();
 				return;
 			}
 			break;
