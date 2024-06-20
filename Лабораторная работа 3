@@ -242,31 +242,20 @@ public:
 
 };
 
-void in_comp(double* time_of_the_race, double* num_refuelings, string* arr_name, int i) {
-	double temp = time_of_the_race[i];
-	time_of_the_race[i] = time_of_the_race[i + 1];
-	time_of_the_race[i + 1] = temp;
-	int temp_refuelings = num_refuelings[i];
-	num_refuelings[i] = num_refuelings[i + 1];
-	num_refuelings[i + 1] = temp_refuelings;
-	string temp_name;
-	temp_name = arr_name[i];
-	arr_name[i] = arr_name[i + 1];
-	arr_name[i + 1] = temp_name;
-};
-
 void comparison(double* time_of_the_race, double* num_refuelings, string* arr_name, int size_arr) {
-	for (int i = 0; i < size_arr - 1; i++)
-	{
-		if (time_of_the_race[i] > time_of_the_race[i + 1])
-		{
-			in_comp(time_of_the_race, num_refuelings, arr_name, i);
-		}
-		if (time_of_the_race[i] == time_of_the_race[i + 1])
-		{
-			if (num_refuelings[i] > num_refuelings[i + 1])
-			{
-				in_comp(time_of_the_race, num_refuelings, arr_name, i);
+	for (int i = 0; i < size_arr - 1; i++) {
+		for (int j = 0; j < size_arr - i - 1; j++) {
+			if (time_of_the_race[j] > time_of_the_race[j + 1] || (time_of_the_race[j] == time_of_the_race[j + 1] && num_refuelings[j] > num_refuelings[j + 1])) {
+				double temp = time_of_the_race[i];
+				time_of_the_race[i] = time_of_the_race[i + 1];
+				time_of_the_race[i + 1] = temp;
+				int temp_refuelings = num_refuelings[i];
+				num_refuelings[i] = num_refuelings[i + 1];
+				num_refuelings[i + 1] = temp_refuelings;
+				string temp_name;
+				temp_name = arr_name[i];
+				arr_name[i] = arr_name[i + 1];
+				arr_name[i + 1] = temp_name;
 			}
 		}
 	}
