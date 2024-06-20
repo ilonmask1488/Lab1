@@ -416,6 +416,9 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 			if (exit_menu == 1)
 			{
 				vehicles->clearWheelsMemory();
+				delete[] time_of_the_race;
+				delete[] num_refuelings;
+				delete[] name_v;
 				return;
 			}
 			break;
