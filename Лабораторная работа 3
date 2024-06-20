@@ -106,7 +106,7 @@ public:
 
 	TransportVehicle() {};
 	TransportVehicle(string Transport_name) {
-		
+
 		cout << "Машина " << endl;
 		cout << "Введите название вашей машины: " << endl;
 		cin >> Title;
@@ -166,7 +166,7 @@ public:
 		Speed = abs((sqrt(power) * ((70 / (amount_wheels)) - 2.5)) / pow(2, Brokewheels));
 	}
 
-	int count_refueling (double lenght_of_the_track, int amount_vehicles, TransportVehicle* vehicles, int i, double power) {
+	int count_refueling(double lenght_of_the_track, int amount_vehicles, TransportVehicle* vehicles, int i, double power) {
 		int num_refuelings;
 		num_refuelings = (int)(((lenght_of_the_track / 100) * vehicles[i].get_eng_consumption()) / vehicles[i].Volume_tank);
 		return num_refuelings;
@@ -201,60 +201,21 @@ public:
 		return os;
 	}
 
-	friend void Determination_track(double lenght_of_the_track, TransportVehicle* vehicles, int amount_vehicles, double power)
-	{
-		vector<string> name_v(amount_vehicles);
-		for (int i = 0; i < amount_vehicles; i++) {
+	friend double Determinate_time(double lenght_of_the_track, TransportVehicle* vehicles, int amount_vehicles, int i) {
+			double time_of_the_race;
+			time_of_the_race = lenght_of_the_track / vehicles[i].get_speed();
+			vehicles[i].Set_Time_race(time_of_the_race);
+
+			return vehicles[i].Get_Time_race();
+	}
+
+	friend double Determinate_refuelings(double lenght_of_the_track, TransportVehicle* vehicles, int amount_vehicles, int i) {
 			int num_refuelings;
 			double time_of_the_race;
 			num_refuelings = (int)(((lenght_of_the_track / 100) * vehicles[i].get_eng_consumption()) / vehicles[i].Volume_tank);
 			vehicles[i].Set_num_refuelings(num_refuelings);
-			time_of_the_race = lenght_of_the_track / vehicles[i].get_speed();
-			vehicles[i].Set_Time_race(time_of_the_race);
-		}
-		for (int i = 0; i < amount_vehicles; ++i)
-		{
-			name_v[i] = vehicles[i].get_name();
-		}
-		for (int i = 0; i < 1; ++i)
-		{
-			for (int j = 0; j < amount_vehicles - i - 1; ++j)
-			{
-				if (vehicles[j].Get_Time_race() > vehicles[j + 1].Get_Time_race() ||
-					(vehicles[j].Get_Time_race() == vehicles[j + 1].Get_Time_race() &&
-						vehicles[j].Get_num_refuelings() > vehicles[j + 1].Get_num_refuelings()))
-				{
-					double temp = vehicles[j].Get_Time_race();
-					vehicles[j].Set_Time_race(vehicles[j + 1].Get_Time_race());
-					vehicles[j + 1].Set_Time_race(temp);
 
-					int temp_refuelings = vehicles[j].Get_num_refuelings();
-					vehicles[j].Set_num_refuelings(vehicles[j + 1].Get_num_refuelings());
-					vehicles[j + 1].Set_num_refuelings(temp_refuelings);
-
-					string temp_name = name_v[j];
-					name_v[j] = name_v[j + 1];
-					name_v[j + 1] = temp_name;
-				}
-			}
-		}
-		for (int i = 0; i < amount_vehicles; i++)
-		{
-			vehicles[i].PrintRaceResults(amount_vehicles, name_v, vehicles, i);
-		}
-	}
-
-	void PrintRaceResults(int amount_vehicles, const vector<string>& name_v, TransportVehicle* vehicles, int i) {
-		cout << "Определение завершено!" << endl;
-		cout << "Транспорт: " << name_v[i] << endl;
-
-		int hours = static_cast<int>(vehicles[i].Get_Time_race());
-		int minutes = static_cast<int>((vehicles[i].Get_Time_race() - hours) * 60);
-		int seconds = static_cast<int>((vehicles[i].Get_Time_race() * 3600) - (hours * 3600) - (minutes * 60));
-
-		cout << "Время в пути: " << hours << " часов " << minutes << " минут " << seconds << " секунд" << endl;
-
-		cout << "Количество дозаправок: " << vehicles[i].Get_num_refuelings() << "\n" << endl;
+			return vehicles[i].Get_num_refuelings();
 	}
 
 	void clearWheelsMemory() {
@@ -262,6 +223,36 @@ public:
 	}
 
 };
+
+void in_comp(double* time_of_the_race, double* num_refuelings, string* arr_name, int i) {
+	double temp = time_of_the_race[i];
+	time_of_the_race[i] = time_of_the_race[i + 1];
+	time_of_the_race[i + 1] = temp;
+	int temp_refuelings = num_refuelings[i];
+	num_refuelings[i] = num_refuelings[i + 1];
+	num_refuelings[i + 1] = temp_refuelings;
+	string temp_name;
+	temp_name = arr_name[i];
+	arr_name[i] = arr_name[i + 1];
+	arr_name[i + 1] = temp_name;
+};
+
+void comparison(double* time_of_the_race, double* num_refuelings, string* arr_name, int size_arr) {
+	for (int i = 0; i < size_arr - 1; i++)
+	{
+		if (time_of_the_race[i] > time_of_the_race[i + 1])
+		{
+			in_comp(time_of_the_race, num_refuelings, arr_name, i);
+		}
+		if (time_of_the_race[i] == time_of_the_race[i + 1])
+		{
+			if (num_refuelings[i] > num_refuelings[i + 1])
+			{
+				in_comp(time_of_the_race, num_refuelings, arr_name, i);
+			}
+		}
+	}
+}
 
 void Wheel_mileage(TransportVehicle* vehicles, int amount_vehicles, double length_of_the_track) {
 	for (int i = 0; i < amount_vehicles; i++) {
@@ -279,6 +270,10 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 	int car = 0;
 	double temp = 0;
 	string Prov;
+	
+	double* time_of_the_race = new double[amount_vehicles];
+	double* num_refuelings = new double[amount_vehicles];
+	string* name_v = new string[amount_vehicles];
 
 	while (exit_menu == 0)
 	{
@@ -357,7 +352,23 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 				break;
 			}
 			system("cls");
-			Determination_track(lenght_of_the_track, vehicles, amount_vehicles, power);
+
+			for (int i = 0; i < amount_vehicles; i++) {
+				time_of_the_race[i] = Determinate_time(lenght_of_the_track, vehicles, amount_vehicles, i);
+				num_refuelings[i] = Determinate_refuelings(lenght_of_the_track, vehicles, amount_vehicles, i);
+				name_v[i] = vehicles[i].get_name();
+			}
+
+			comparison(time_of_the_race, num_refuelings, name_v, amount_vehicles);
+
+			for (int i = 0; i < amount_vehicles; i++) {
+				cout << "Время прохождения трассы автомобилем " << name_v[i] << endl;
+				cout << "Часов: " << static_cast<int>(time_of_the_race[i]) << "\t";
+				cout << "Минут: " << static_cast<int>((time_of_the_race[i] - (int)time_of_the_race[i]) * 60) << "\t";
+				cout << "Секунд: " << static_cast<int>(time_of_the_race[i] * 3600 - (int)(time_of_the_race[i]) * 3600 - (int)((time_of_the_race[i] - (int)time_of_the_race[i]) * 60) * 60) << endl;
+				cout << "Количество запарвок: " << num_refuelings[i] << endl << endl;
+			}
+
 			determination_complete++;
 			Wheel_mileage(vehicles, amount_vehicles, lenght_of_the_track);
 			temp = temp + lenght_of_the_track;
@@ -434,7 +445,7 @@ int main() {
 			cin >> Prov;
 		}
 	}
-	do 
+	do
 	{
 		if (Amount_Vehicles <= 0)
 		{
