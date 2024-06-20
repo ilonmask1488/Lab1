@@ -116,7 +116,13 @@ public:
 		while (true) {
 			if (Proverka(Prov)) {
 				istringstream(Prov) >> wheel;
-				break;
+				if (wheel > 0) {
+					break;
+				}
+				else {
+					cout << "Введите нормальное число." << endl;
+					cin >> Prov;
+				}
 			}
 			else {
 				cout << "Введите нормальное число." << std::endl;
@@ -135,7 +141,13 @@ public:
 		while (true) {
 			if (Proverka(Prov)) {
 				istringstream(Prov) >> power;
-				break;
+				if (power > 0) {
+					break;
+				}
+				else {
+					cout << "Введите нормальное число." << endl;
+					cin >> Prov;
+				}
 			}
 			else {
 				cout << "Введите нормальное число." << std::endl;
@@ -150,7 +162,13 @@ public:
 		while (true) {
 			if (Proverka(Prov)) {
 				istringstream(Prov) >> Volume_tank;
-				break;
+				if (Volume_tank > 0) {
+					break;
+				}
+				else {
+					cout << "Введите нормальное число." << endl;
+					cin >> Prov;
+				}
 			}
 			else {
 				cout << "Введите нормальное число." << std::endl;
@@ -363,9 +381,9 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 
 			for (int i = 0; i < amount_vehicles; i++) {
 				cout << "Время прохождения трассы автомобилем " << name_v[i] << endl;
-				cout << "Часов: " << static_cast<int>(time_of_the_race[i]) << "\t";
-				cout << "Минут: " << static_cast<int>((time_of_the_race[i] - (int)time_of_the_race[i]) * 60) << "\t";
-				cout << "Секунд: " << static_cast<int>(time_of_the_race[i] * 3600 - (int)(time_of_the_race[i]) * 3600 - (int)((time_of_the_race[i] - (int)time_of_the_race[i]) * 60) * 60) << endl;
+				cout << "Часов: " << (int)(time_of_the_race[i]) << "\t";
+				cout << "Минут: " << (int)((time_of_the_race[i] - (int)time_of_the_race[i]) * 60) << "\t";
+				cout << "Секунд: " << (int)(time_of_the_race[i] * 3600 - (int)(time_of_the_race[i]) * 3600 - (int)((time_of_the_race[i] - (int)time_of_the_race[i]) * 60) * 60) << endl;
 				cout << "Количество запарвок: " << num_refuelings[i] << endl << endl;
 			}
 
