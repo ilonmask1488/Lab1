@@ -150,7 +150,7 @@ public:
 				}
 			}
 			else {
-				cout << "Введите нормальное число." << std::endl;
+				cout << "Введите нормальное число." << endl;
 				cin >> Prov;
 			}
 		}
@@ -171,7 +171,7 @@ public:
 				}
 			}
 			else {
-				cout << "Введите нормальное число." << std::endl;
+				cout << "Введите нормальное число." << endl;
 				cin >> Prov;
 			}
 		}
@@ -180,6 +180,31 @@ public:
 		engine_consumption = calculating_consumption(power);
 		determination_speed();
 	}
+
+	TransportVehicle& operator=(const TransportVehicle& other) {
+		if (this == &other) {
+			return *this;
+		}
+		Title = other.Title;
+		wheel = other.wheel;
+		power = other.power;
+		Volume_tank = other.Volume_tank;
+		Speed = other.Speed;
+		num_refuelings = other.num_refuelings;
+		time_of_the_race = other.time_of_the_race;
+		amount_wheels = other.amount_wheels;
+		Current_volume = other.Current_volume;
+		engine_consumption = other.engine_consumption;
+		mileage = other.mileage;
+		Vehicle_name = other.Vehicle_name;
+		Prov = other.Prov;
+		Brokewheels = other.Brokewheels;
+		wheels = new Wheel[wheel];
+		for (int i = 0; i < wheel; i++) {
+			wheels[i] = other.wheels[i];
+		}
+	}
+
 	void determination_speed() {
 		Speed = abs((sqrt(power) * ((70 / (amount_wheels)) - 2.5)) / pow(2, Brokewheels));
 	}
@@ -196,7 +221,7 @@ public:
 		}
 	}
 
-	friend ostream& operator<<(std::ostream& os, const TransportVehicle& vehicle) {
+	friend ostream& operator<<(ostream& os, const TransportVehicle& vehicle) {
 		os << "Название: " << vehicle.Title << "\n";
 		os << "Количество колёс: " << vehicle.amount_wheels << "\n";
 		os << "Пробег: " << vehicle.wheels->get_mileage_wheel() << "\n";
@@ -220,23 +245,23 @@ public:
 	}
 
 	friend double Determinate_time(double lenght_of_the_track, TransportVehicle* vehicles, int amount_vehicles, int i) {
-			double time_of_the_race;
-			time_of_the_race = lenght_of_the_track / vehicles[i].get_speed();
-			vehicles[i].Set_Time_race(time_of_the_race);
+		double time_of_the_race;
+		time_of_the_race = lenght_of_the_track / vehicles[i].get_speed();
+		vehicles[i].Set_Time_race(time_of_the_race);
 
-			return vehicles[i].Get_Time_race();
+		return vehicles[i].Get_Time_race();
 	}
 
 	friend double Determinate_refuelings(double lenght_of_the_track, TransportVehicle* vehicles, int amount_vehicles, int i) {
-			int num_refuelings;
-			double time_of_the_race;
-			num_refuelings = (int)(((lenght_of_the_track / 100) * vehicles[i].get_eng_consumption()) / vehicles[i].Volume_tank);
-			vehicles[i].Set_num_refuelings(num_refuelings);
+		int num_refuelings;
+		double time_of_the_race;
+		num_refuelings = (int)(((lenght_of_the_track / 100) * vehicles[i].get_eng_consumption()) / vehicles[i].Volume_tank);
+		vehicles[i].Set_num_refuelings(num_refuelings);
 
-			return vehicles[i].Get_num_refuelings();
+		return vehicles[i].Get_num_refuelings();
 	}
 
-	void clearWheelsMemory() {
+	~TransportVehicle() {
 		delete[] wheels;
 	}
 
@@ -269,7 +294,8 @@ void Wheel_mileage(TransportVehicle* vehicles, int amount_vehicles, double lengt
 	}
 }
 
-void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_track, string vehicle_name, int amount_wheels, double power)
+void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_track, string vehicle_name, double power)
+
 {
 	int choice;
 	int exit_menu = 0;
@@ -277,7 +303,7 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 	int car = 0;
 	double temp = 0;
 	string Prov;
-	
+
 	double* time_of_the_race = new double[amount_vehicles];
 	double* num_refuelings = new double[amount_vehicles];
 	string* name_v = new string[amount_vehicles];
@@ -306,6 +332,7 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 		{
 		case 1:
 			system("cls");
+
 			for (int i = 0; i < amount_vehicles; ++i)
 			{
 				vehicles[i] = TransportVehicle(vehicle_name);
@@ -324,7 +351,6 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 				cout << vehicles[i];
 			}
 			break;
-			break;
 		case 3:
 			system("cls");
 			if (car == 0)
@@ -337,7 +363,7 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 			while (true) {
 				if (Proverka(Prov)) {
 					istringstream(Prov) >> lenght_of_the_track;
-					if (lenght_of_the_track > 0) {
+					if (lenght_of_the_track > 10 ^ (-100)) {
 						break;
 					}
 					else {
@@ -422,7 +448,6 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 			}
 			if (exit_menu == 1)
 			{
-				vehicles->clearWheelsMemory();
 				delete[] time_of_the_race;
 				delete[] num_refuelings;
 				delete[] name_v;
@@ -465,7 +490,7 @@ int main() {
 	} while (Amount_Vehicles <= 0);
 
 	TransportVehicle* vehicles = new TransportVehicle[Amount_Vehicles];
-	menu(Amount_Vehicles, vehicles, Lenght_ofthe_Track, Transportv_name, Amount_Vehicles, power);
+	menu(Amount_Vehicles, vehicles, Lenght_ofthe_Track, Transportv_name, power);
 	delete[] vehicles;
 	return 0;
 }
