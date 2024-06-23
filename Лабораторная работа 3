@@ -11,9 +11,16 @@
 using namespace std;
 
 bool Proverka(const string& input) {
+	bool hasDecimal = false;
 	for (int i = 0; i < input.length(); i++) {
-		if (!isdigit(input[i])) {
-			return false;
+		if (input[i] == '.') {
+			if (hasDecimal) {
+				return false; 
+			}
+			hasDecimal = true;
+		}
+		else if (!isdigit(input[i])) {
+			return false; 
 		}
 	}
 	return true;
@@ -363,7 +370,7 @@ void menu(int amount_vehicles, TransportVehicle* vehicles, double lenght_of_the_
 			while (true) {
 				if (Proverka(Prov)) {
 					istringstream(Prov) >> lenght_of_the_track;
-					if (lenght_of_the_track > 10 ^ (-100)) {
+					if (lenght_of_the_track > 1e-100) {
 						break;
 					}
 					else {
