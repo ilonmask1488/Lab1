@@ -1,1 +1,627 @@
+#define _CRT_SECURE_NO_WARNINGS 1
+#include <iostream>
+#include <locale.h> 
+#include <string>
+#include <cmath>
+#include <sstream>
+#include <cstdlib>
+#include <vector>
+#include <ctime>
+#include <algorithm>
+#include <limits>
+#define refueling_time 0.016
+#define reWheel_time 0.004 
+#define dt 0.0003
 
+using namespace std;
+
+bool Proverka(const string& input) {
+	bool hasDecimal = false;
+	for (int i = 0; i < input.length(); i++) {
+		if (input[i] == '.') {
+			if (hasDecimal) {
+				return false; 
+			}
+			hasDecimal = true;
+		}
+		else if (!isdigit(input[i])) {
+			return false; 
+		}
+	}
+	return true;
+}
+
+int Get_Variant() {
+	int number;
+	string userInput;
+	getline(cin, userInput);
+	stringstream ss(userInput);
+	while (true) {
+		cout << "Введите число: " << endl;
+		getline(cin, userInput);
+		stringstream ss(userInput);
+		if (ss >> number && number > 0) {
+			break;
+		}
+		else {
+			cout << "Ошибка! Пожалуйста, введите допустимое значение." << endl;
+		}
+	}
+	return number;
+}
+
+int checkinput(int input_value)
+{
+	cin >> input_value;
+	if (cin.fail() || input_value <= 0) {
+		while (!(cin >> input_value) && input_value <= 0) {
+			cout << "Uncorrect, try again\n";
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		}
+	}
+	return input_value;
+}
+
+class Wheel {
+	double mileage_wheel;
+	bool status;
+public:
+	void check_status(double mileage, double Speed);
+	Wheel() { status = 0; mileage_wheel = 0; };
+	virtual ~Wheel() {};
+	int Get_status() {
+		return status;
+	}
+	void Set_status(bool status) {
+		this->status = status;
+	}
+};
+
+class Engine {
+protected:
+	double engine_consumption;
+	double power;
+public:
+	double calculating_consumption(double power)
+	{
+		return fabs(pow(power, 1 / 3) + sqrt(power) - 6.25);
+	}
+};
+
+class Fuel_system {
+protected:
+	double Volume_tank;
+	double Current_volume;
+public:
+	void calc_current_volume(double engine_consumption, double mileage)
+	{
+		Current_volume = Volume_tank - ((engine_consumption / 100) * mileage);
+	}
+};
+
+class TransportVehicle : public Engine, public Fuel_system {
+	string Vehicle_name;
+	string Title;
+	int amount_wheels;
+	double mileage;
+	double Speed;
+	int num_refuelings;
+	double time_of_the_race;
+	int current_laps;
+	double current_mileage;
+	int wheel;
+	string Prov;
+public:
+	int Brokewheels = 0;
+	Wheel* wheels;
+
+	vector<Wheel> v_wheels;
+	int stat_of_car;
+	double pits_time = 0;
+
+	void determination_speed() {
+		Speed = abs((sqrt(power) * ((70 / (amount_wheels)) - 2.5)) / pow(2, Brokewheels));
+	}
+
+	void mileage_new() { this->mileage += Speed * dt; }
+	void current_mileage_new() { this->current_mileage += (Speed * dt); }
+	double get_mileage() { return mileage; }
+	double get_current_mil() { return current_mileage; }
+
+	double get_consumption() { return calculating_consumption(power); }
+
+	void calc_broken_wheels();
+	
+	void output_time();
+
+	int get_broken_wheels() { return Brokewheels; };
+
+	void set_current_laps(int current_laps) { this->current_laps = current_laps; };
+	int get_current_laps() { return current_laps; };
+	void new_current_laps() { this->current_laps++; }
+
+	double get_current_volume() { return Current_volume; };
+
+	void set_name(string Title) { this->Title = Title; }
+	string get_name() { return Title; }
+
+	double get_speed() { return Speed; }
+
+	double get_eng_consumption() { return engine_consumption; }
+
+	void set_amount_wheels(int amount_wheels) { this->amount_wheels = amount_wheels; }
+	int get_amount_wheels() { return amount_wheels; }
+
+	double get_vol_tank() { return Volume_tank; }
+
+	void Set_num_refuelings(int num_refuelings) { this->num_refuelings = num_refuelings; }
+	int Get_num_refuelings() { return num_refuelings; }
+
+	void Set_Time_race(double time_of_the_race) { this->time_of_the_race = time_of_the_race; }
+	double Get_Time_race() { return time_of_the_race; }
+
+	void total_time() {
+		time_of_the_race += pits_time;
+	}
+
+	int lap_check(double Lenght_lap) {
+		if (current_mileage - Lenght_lap >= 0) {
+			current_laps = int(mileage / Lenght_lap);
+			current_mileage = 0;
+			return 1;
+		}
+		else {
+			return 0;
+		}
+	}
+
+	void check_refuel(double Lenght_lap) {
+		if (Current_volume <= (engine_consumption * (Lenght_lap / 100))) {
+			num_refuelings++;
+			pits_time += refueling_time;
+			Current_volume = Volume_tank;
+		}
+	}
+
+	void check_change_wheels();
+
+
+
+	TransportVehicle() {};
+	TransportVehicle(string Transport_name) {
+
+		cout << "Машина " << endl;
+		cout << "Введите название вашей машины: " << endl;
+		cin >> Title;
+		set_name(Title);
+		cout << "Введите количество колёс: " << endl;
+		cin >> Prov;
+		while (true) {
+			if (Proverka(Prov)) {
+				istringstream(Prov) >> wheel;
+				if (wheel > 0) {
+					break;
+				}
+				else {
+					cout << "Введите нормальное число." << endl;
+					cin >> Prov;
+				}
+			}
+			else {
+				cout << "Введите нормальное число." << std::endl;
+				cin >> Prov;
+			}
+		}
+		set_amount_wheels(wheel);
+
+		wheels = new Wheel[wheel];
+		for (int i = 0; i < wheel; i++) {
+			wheels[i] = Wheel();
+		}
+
+		cout << "Введите мощность: " << endl;
+		cin >> Prov;
+		while (true) {
+			if (Proverka(Prov)) {
+				istringstream(Prov) >> power;
+				if (power > 0) {
+					break;
+				}
+				else {
+					cout << "Введите нормальное число." << endl;
+					cin >> Prov;
+				}
+			}
+			else {
+				cout << "Введите нормальное число." << endl;
+				cin >> Prov;
+			}
+		}
+
+		mileage = 0;
+
+		cout << "Введите объем резервуара: " << endl;
+		cin >> Prov;
+		while (true) {
+			if (Proverka(Prov)) {
+				istringstream(Prov) >> Volume_tank;
+				if (Volume_tank > 0) {
+					break;
+				}
+				else {
+					cout << "Введите нормальное число." << endl;
+					cin >> Prov;
+				}
+			}
+			else {
+				cout << "Введите нормальное число." << endl;
+				cin >> Prov;
+			}
+		}
+		cout << endl;
+		Current_volume = Volume_tank;
+		engine_consumption = calculating_consumption(power);
+		determination_speed();
+	}
+
+	TransportVehicle& operator=(const TransportVehicle& other) {
+		if (this == &other) {
+			return *this;
+		}
+		Title = other.Title;
+		wheel = other.wheel;
+		power = other.power;
+		Volume_tank = other.Volume_tank;
+		Speed = other.Speed;
+		num_refuelings = other.num_refuelings;
+		time_of_the_race = other.time_of_the_race;
+		amount_wheels = other.amount_wheels;
+		Current_volume = other.Current_volume;
+		engine_consumption = other.engine_consumption;
+		mileage = other.mileage;
+		Vehicle_name = other.Vehicle_name;
+		Prov = other.Prov;
+		Brokewheels = other.Brokewheels;
+		wheels = new Wheel[wheel];
+		for (int i = 0; i < wheel; i++) {
+			wheels[i] = other.wheels[i];
+		}
+	}
+
+	int count_refueling(double lenght_of_the_track, int amount_vehicles, TransportVehicle* vehicles, int i, double power) {
+		int num_refuelings;
+		num_refuelings = (int)(((lenght_of_the_track / 100) * vehicles[i].get_eng_consumption()) / vehicles[i].Volume_tank);
+		return num_refuelings;
+	}
+
+	void after_track(double mileage) {
+		for (int i = 0; i < amount_wheels; i++) {
+			wheels[i].check_status(mileage, Speed);
+		}
+	}
+
+	friend istream& operator >> (istream& stream, TransportVehicle& vehicle)
+	{
+		cout << "Enter vehicle name: ";
+		stream >> vehicle.Title;
+		try
+		{
+			cout << "Enter amount of wheels: ";
+			stream >> vehicle.amount_wheels;
+			if (vehicle.amount_wheels < 0) {
+				throw "amount wheels must be more than 0 ";
+			}
+		}
+		catch (const char* error_message) {
+			cerr << "exception thrown: " << error_message << endl;
+			vehicle.amount_wheels = checkinput(vehicle.amount_wheels);
+		}
+		for (int i = 0; i < vehicle.amount_wheels; i++) {
+			Wheel wheel1;
+			vehicle.v_wheels.push_back(wheel1);
+		}
+		try
+		{
+			cout << "Enter Volume tank: ";
+			stream >> vehicle.Volume_tank;;
+			if (vehicle.Volume_tank <= 0) {
+				throw "Volume tank must more than 0";
+			}
+		}
+		catch (const char* error_message)
+		{
+			cerr << "exception thrown: " << error_message << endl;
+			vehicle.Volume_tank = checkinput(vehicle.Volume_tank);
+		}
+		try
+		{
+			cout << "Enter engine power: ";
+			stream >> vehicle.power;
+			if (vehicle.power <= 0) {
+				throw "Power must more than 0";
+			}
+		}
+		catch (const char* error_message)
+		{
+			cerr << "exception thrown: " << error_message << endl;
+			vehicle.power = checkinput(vehicle.power);
+		}
+		vehicle.current_mileage = 0;
+		vehicle.current_laps = 0;
+		vehicle.mileage = 0;
+		vehicle.stat_of_car = 0;
+		vehicle.Current_volume = vehicle.Volume_tank;
+		vehicle.engine_consumption = vehicle.calculating_consumption(vehicle.power);
+		vehicle.determination_speed();
+		return stream;
+	}
+
+	friend ostream& operator << (ostream& stream, TransportVehicle& vehicle)
+	{
+		stream << "\nName of the car: " << vehicle.Title << endl;
+		stream << "Amount of wheels: " << vehicle.amount_wheels << endl;
+		stream << "Broken wheels: " << vehicle.Brokewheels << endl;
+		stream << "Speed: " << vehicle.Speed << endl;
+		stream << "Volume tank: " << vehicle.Volume_tank << endl;
+		stream << "Current volume: " << vehicle.Current_volume << endl;
+		stream << "Engine power: " << vehicle.power << endl;
+		stream << "Engine consumption: " << vehicle.engine_consumption << endl;
+		stream << "Mileage: " << vehicle.mileage << endl;
+		return stream;
+	}
+
+	~TransportVehicle() {
+		delete[] wheels;
+	}
+
+};
+
+void OutputResults(vector<TransportVehicle> vehic);
+
+int End_race(vector<TransportVehicle>& vehicles, int Amount_laps, double Lenght_lap);
+
+void menu() {
+	vector<TransportVehicle> vehicles;
+	int amount_laps;
+	int choice;
+	int exit_menu = 0;
+	double lenght_lap = 0;
+	int determination_complete = 0;
+	int carcheck = 0;
+	double temp = 0;
+	string Prov;
+
+	int end_race(vector<TransportVehicle> &vehicles, int amount_laps, double lenght_lap);
+
+	while (exit_menu == 0) {
+		cout << "Какое действие хотите совершить?" << endl;
+		cout << "1. Внести данные о транспортном средстве" << endl;
+		cout << "2. Посмотреть данные о транспортных средствах" << endl;
+		cout << "3. Ввести протяженность трассы" << endl;
+		cout << "4. Вычисление пути" << endl;
+		cout << "5. Результаты" << endl;
+		cout << "6. Выход" << endl;
+		cout << "> ";
+		string Prov;
+		cin >> Prov;
+		while (true) {
+			if (Proverka(Prov)) {
+				int choice;
+				istringstream(Prov) >> choice;
+			}
+			switch (choice)
+			{
+			 case 1:
+				system("cls");
+				TransportVehicle newcar;
+				cin >> newcar;
+				vehicles.push_back(newcar);
+				system("cls");
+				cout << "Транспорт: " << newcar.get_name() << " был добавлен" << endl;
+				carcheck++;
+				break;
+			  case 2:
+				system("cls");
+				if (carcheck == 0)
+				{
+					cout << "Во-первых, введите транспортное средство!" << endl;
+					break;
+				}
+				for (int i = 0; i < vehicles.size(); ++i)
+				{
+					cout << vehicles[i];
+				}
+				break;
+			  case 3:
+				system("cls");
+				if (carcheck == 0)
+				{
+					cout << "Во-первых, введите транспортное средство!" << endl;
+					break;
+				}
+				cout << "Введите длину трассы: " << endl;
+				cin >> Prov;
+				while (true) {
+					if (Proverka(Prov)) {
+						istringstream(Prov) >> amount_laps;
+						if (amount_laps > 0) {
+							break;
+						}
+						else {
+							cout << "Введите нормальное число." << endl;
+							cin >> Prov;
+						}
+					}
+					else {
+						cout << "Введите нормальное число." << endl;
+						cin >> Prov;
+					}
+				}
+				break;
+			  case 4:
+				if (carcheck == 0) {
+					cout << "Сначала введите транспортные средства." << endl;
+				}
+
+				if (amount_laps == 0)
+				{
+					cout << "Введите количество кругов, прежде чем определять!" << endl;
+					break;
+				}
+				system("cls");
+
+				double current_time = 0;
+				int racing_cars = vehicles.size();
+
+				while (!end_race(vehicles, amount_laps, lenght_lap)) {
+					if (racing_cars <= 0) {
+						break;
+					}
+					for (int i = 0; i < vehicles.size(); i++) {
+						int exit = 0;
+						if (vehicles[i].stat_of_car == 0) {
+							vehicles[i].mileage_new();
+							vehicles[i].current_mileage_new();
+							for (int j = 0; j < vehicles[i].v_wheels.size(); j++) {
+								vehicles[i].v_wheels[j].check_status(vehicles[i].get_mileage(), vehicles[i].get_speed());
+							}
+							vehicles[i].calc_broken_wheels();
+							vehicles[i].calc_current_volume(vehicles[i].get_consumption(), vehicles[i].get_current_mil());
+							vehicles[i].determination_speed();
+							vehicles[i].Set_Time_race(current_time);
+							vehicles[i].output_time();
+							cout << "Транспорт: " << vehicles[i].get_name() << endl;
+							cout << "Круг: " << vehicles[i].get_current_laps() + 1 << endl;
+							cout << "Текущая скорость: " << vehicles[i].get_speed() << endl;
+							cout << "Текущее количество топлива: " << vehicles[i].get_current_volume() << endl;
+							cout << "Сломанные колеса: " << vehicles[i].get_broken_wheels() << endl;
+							cout << "Пробег: " << vehicles[i].get_mileage() << endl;
+							if (vehicles[i].get_broken_wheels() == vehicles[i].v_wheels.size() || (vehicles[i].get_current_volume() <= 0)) {
+								exit = 1;
+								vehicles[i].Set_Time_race(current_time);
+								vehicles[i].new_current_laps();
+							}
+							if ((lenght_lap * amount_laps) - (vehicles[i].get_mileage()) <= 0) {
+								exit = 1;
+								vehicles[i].Set_Time_race(current_time);
+								vehicles[i].set_current_laps(amount_laps);
+								vehicles[i].output_time();
+								cout << vehicles[i].get_name() << "Закончено" << endl;
+							}
+							if (exit == 1) {
+								vehicles[i].stat_of_car = 1;
+								racing_cars = racing_cars - 1;
+								break;
+							}
+							if (vehicles[i].lap_check(lenght_lap) == 1) {
+								vehicles[i].check_refuel(lenght_lap);
+								vehicles[i].check_change_wheels();
+							}
+						}
+						else {
+							continue;
+						}
+					}
+					current_time += dt;
+				}
+				for (int i = 0; i < vehicles.size(); i++) {
+					vehicles[i].total_time();
+				}
+				break;
+			  case 5:
+				system("cls");
+				OutputResults(vehicles);
+				break;
+			  case 6:
+				system("cls");
+				cout << "Вы уверены, что выходите? 1 - да, 0 - нет\n";
+				cin >> Prov;
+				while (true) {
+					if (Proverka(Prov)) {
+						istringstream(Prov) >> exit_menu;
+						break;
+					}
+					else {
+						cout << "Введите нормальное число." << endl;
+						cin >> Prov;
+					}
+				break;
+			}
+		}
+	}
+}
+
+int End_race(vector<TransportVehicle>& vehicles, int Amount_laps, double Lenght_lap) {
+	int finish_cars = 0;
+	for (int i = 0; i < vehicles.size(); i++) {
+		if (vehicles[i].get_current_mil() >= Amount_laps * Lenght_lap) {
+			finish_cars++;
+		}
+	}
+	if (finish_cars == vehicles.size()) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+int main() {
+	setlocale(LC_ALL, "Russian");
+	srand(time(NULL));
+	menu();
+	return 0;
+}
+
+void Wheel::check_status(double mileage, double Speed) {
+	if (status != 1) {
+		double k = rand() % 50 + (mileage / 100);
+		if (k > 49) {
+			status = 1;
+		}
+	}
+}
+
+void TransportVehicle::calc_broken_wheels() {
+	int count = 0;
+	for (int i = 0; i < v_wheels.size(); i++) {
+		if (v_wheels[i].Get_status() == 1) {
+			count++;
+		}
+	}
+	Brokewheels = count;
+}
+
+void TransportVehicle::check_change_wheels() {
+	if ((Brokewheels != 0) && (Brokewheels < amount_wheels)) {
+		pits_time += reWheel_time * Brokewheels;
+		for (int i = 0; i < v_wheels.size(); i++) {
+			if (v_wheels[i].Get_status() == 1) {
+				v_wheels[i].Set_status(0);
+			}
+		}
+	}
+}
+
+vector<TransportVehicle> RatingResults(vector<TransportVehicle> veh) {
+	sort(veh.begin(), veh.end(), [](TransportVehicle& a, TransportVehicle& b) {
+		if (a.Get_Time_race() != b.Get_Time_race()) {
+			return a.Get_Time_race() < b.Get_Time_race();
+		}
+		else {
+			return a.Get_num_refuelings() < b.Get_num_refuelings();
+		}
+		});
+	return veh;
+}
+
+void OutputResults(vector<TransportVehicle> veh) {
+	vector<TransportVehicle> results = RatingResults(veh);
+	for (int i = 0; i < results.size(); i++) {
+		cout << results[i].get_name() << endl;
+		results[i].output_time();
+		cout << "Круги: " << results[i].get_current_laps() << endl;
+		cout << "Количество заправок: " << int(results[i].Get_num_refuelings()) << endl;
+	}
+}
