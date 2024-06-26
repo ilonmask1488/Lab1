@@ -31,12 +31,12 @@ bool Proverka(const string& input) {
 	for (int i = 0; i < input.length(); i++) {
 		if (input[i] == '.') {
 			if (hasDecimal) {
-				return false; 
+				return false;
 			}
 			hasDecimal = true;
 		}
 		else if (!isdigit(input[i])) {
-			return false; 
+			return false;
 		}
 	}
 	return true;
@@ -72,7 +72,7 @@ class Wheel {
 public:
 	void check_status(double mileage, double Speed);
 	Wheel() { status = 0; mileage_wheel = 0; };
-	void def_wheel(double  mileage, double Speed);
+	void def_wheel(double  mileage, double Speed) {};
 	int Get_status() {
 		return status;
 	}
@@ -140,7 +140,7 @@ public:
 	void calc_broken_wheels();
 
 	void reset();
-	
+
 	void output_time() {};
 
 	int get_broken_wheels() { return Brokewheels; };
@@ -297,6 +297,7 @@ public:
 		for (int i = 0; i < wheel; i++) {
 			wheels[i] = other.wheels[i];
 		}
+		return *this;
 	}
 
 	int count_refueling(double lenght_of_the_track, int amount_vehicles, TransportVehicle* vehicles, int i, double power) {
@@ -361,6 +362,8 @@ int End_race(vector<TransportVehicle>& vehicles, int Amount_laps, double Lenght_
 	}
 }
 
+int skip(vector<int> skip_id, int i);
+
 void Wheel::check_status(double mileage, double Speed) {
 	if (status != 1) {
 		double k = rand() % 50 + (mileage / 100);
@@ -415,14 +418,14 @@ void OutputResults(vector<TransportVehicle> veh) {
 	}
 }
 
-void TransportVehicle::time_display()
+void TransportVehicle::output_time()
 {
 	double t = this->time_of_the_race;
 	int hours = int(t);
 	double cur_time = (t - hours) * 60;
 	int minutes = int(cur_time);
 	int seconds = int((cur_time - minutes) * 60);
-	cout << "Время: " << setw(4) << setfill('0') << hours << ":" << setw(2) << setfill('0') << minutes << ":" << setw(2) << setfill('0') << seconds << endl;
+	cout << "Время: " << hours << ":" << minutes << ":" << seconds << endl;
 }
 
 void TransportVehicle::reset()
@@ -456,25 +459,17 @@ void New_car(vector<TransportVehicle>& vehicles) {
 	cout << "Транспорт " << newcar.get_name() << " был добавлен" << endl << endl;
 }
 
-void Determination(vector<TransportVehicle>& vehicles) {
-	vector<int> skip_id{ -1 };
-}
-
 void menu() {
 	vector<TransportVehicle> vehicles;
 
-	double current_time = 0;
-	int racing_cars = vehicles.size();
+	vector<int> skip_id{ -1 };
 
-	int amount_laps;
+	int amount_laps = 0;
 	input_status choice;
 	int exit_menu = 0;
 	double lenght_lap = 0;
-	int determination_complete = 0;
 	int carcheck = 0;
-	double temp = 0;
 	string Prov;
-	int check;
 	int a;
 
 	while (exit_menu == 0) {
@@ -499,55 +494,54 @@ void menu() {
 			}
 		}
 		choice = static_cast<input_status>(a);
-		switch (choice)
-		{
 
-		case input_status::New_car:
+		if (choice == input_status::New_car) {
 
 			system("cls");
 			New_car(vehicles);
 			carcheck++;
-			break;
+		}
 
-		case input_status::Check_car:
+		if (choice == input_status::Check_car) {
 
 			system("cls");
 			if (carcheck == 0)
 			{
 				cout << "Во-первых, введите транспортное средство!" << endl;
-				break;
+				continue;
 			}
 			for (int i = 0; i < vehicles.size(); ++i)
 			{
 				cout << vehicles[i];
 			}
-			break;
+		}
 
-		case input_status::Input_lap:
+		if (choice == input_status::Input_lap) {
 
 			system("cls");
 			if (carcheck == 0)
 			{
 				cout << "Во-первых, введите транспортное средство!" << endl;
-				break;
+				continue;
 			}
 
 			amount_laps = input("Введите количество кругов: ");
 
 			lenght_lap = input("Введите длину круга: ");
 
-			break;
+		}
 
-		case input_status::Determination:
+		if (choice == input_status::Determination) {
 
 			if (carcheck == 0) {
 				cout << "Сначала введите транспортные средства." << endl;
+				continue;
 			}
 
 			if (amount_laps == 0)
 			{
 				cout << "Введите количество кругов, прежде чем определять!" << endl;
-				break;
+				continue;
 			}
 			system("cls");
 
@@ -556,7 +550,6 @@ void menu() {
 				vehicles[i].reset();
 			}
 			double current_time = 0;
-			Determination(vehicles);
 			int racing_cars = vehicles.size();
 			while (!End_race(vehicles, lenght_lap, amount_laps))
 			{
@@ -567,7 +560,7 @@ void menu() {
 				for (int i = 0; i < vehicles.size(); i++)
 				{
 					int exit = 0;
-					if (find(skip_id.begin(), skip_id.end(), i) == skip_id.end())
+					if (vehicles[i].stat_of_car == 0)
 					{
 						vehicles[i].mileage_new();
 						vehicles[i].current_mileage_new();
@@ -579,13 +572,13 @@ void menu() {
 						vehicles[i].calculate_cur_fuel(vehicles[i].calculateIntake(), vehicles[i].get_current_mil());
 						vehicles[i].determination_speed();
 						vehicles[i].Set_Time_race(current_time);
-						vehicles[i].time_display();
-						cout << "car: " << vehicles[i].Title
-							<< " circle: " << vehicles[i].get_current_laps() + 1
-							<< " speed: " << vehicles[i].get_speed() << "\n"
-							<< " Current fuel " << vehicles[i].get_current_volume()
-							<< " Damaged wheels: " << vehicles[i].get_broken_wheels() << "\n"
-							<< " Mileage: " << vehicles[i].get_mileage() << "\n";
+						vehicles[i].output_time();
+						cout << "Машина: " << vehicles[i].Title
+							<< " Круг: " << vehicles[i].get_current_laps() + 1
+							<< " Скорость: " << vehicles[i].get_speed() << "\n"
+							<< " Текущее топливо " << vehicles[i].get_current_volume()
+							<< " Сломанные колёса: " << vehicles[i].get_broken_wheels() << "\n"
+							<< " Пробег: " << vehicles[i].get_mileage() << "\n";
 						if (vehicles[i].get_broken_wheels() == vehicles[i].v_wheels.size() || (vehicles[i].get_current_volume() <= 0))
 						{
 							exit = 1;
@@ -598,11 +591,11 @@ void menu() {
 							vehicles[i].Set_Time_race(current_time);
 							vehicles[i].set_current_laps(amount_laps);
 							vehicles[i].time_display();
-							cout << "" << vehicles[i].Title << " just finished" << endl;
+							cout << "" << vehicles[i].Title << " закончила" << endl;
 						}
 						if (exit == 1)
 						{
-							skip_id.push_back(i); // ТС будет пропускаться, так как финишировала
+							vehicles[i].stat_of_car = 1;
 							racing_cars = racing_cars - 1;
 							break;
 						}
@@ -612,10 +605,10 @@ void menu() {
 							vehicles[i].check_change_wheels();
 						}
 					}
-					else
-					{
-						continue; // Пропускаем итерацию
-					}
+					//else
+					//{
+					//	continue; // Пропускаем итерацию
+					//}
 				}
 				current_time += dt;
 			}
@@ -623,12 +616,12 @@ void menu() {
 			{
 				vehicles[i].total_time();
 			}
-			break;
-		case input_status::Results:
+		}
+		if (choice == input_status::Results) {
 			system("cls");
 			OutputResults(vehicles);
-			break;
-		case input_status::Exit:
+		}
+		if (choice == input_status::Exit) {
 			system("cls");
 			cout << "Вы уверены, что выходите? 1 - да, 0 - нет\n";
 			cin >> Prov;
@@ -641,7 +634,6 @@ void menu() {
 					cout << "Введите нормальное число." << endl;
 					cin >> Prov;
 				}
-				break;
 			}
 		}
 	}
@@ -653,4 +645,3 @@ int main() {
 	menu();
 	return 0;
 }
-
