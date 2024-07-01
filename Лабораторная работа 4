@@ -166,10 +166,10 @@ public:
 
     void output_time() {
         double t = this->time_of_the_race;
-        double hours = (floor)(t);
+        double hours = (int)(t);
         double cur_time = (t - hours) * 60;
-        double minutes = (floor)(cur_time);
-        double seconds = (floor)((cur_time - minutes) * 60);
+        double minutes = (int)(cur_time);
+        double seconds = (int)((cur_time - minutes) * 60);
         if ((hours == 0) && (minutes == 0)) { cout << "Время: " << seconds << " с\n"; }
         else if (hours == 0) { cout << "Время:" << minutes << " мин " << seconds << " с\n"; }
         else { cout << "Время: " << hours << " ч " << minutes << " мин " << seconds << " с\n"; }
