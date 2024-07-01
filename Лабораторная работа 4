@@ -50,7 +50,7 @@ int input(string a) {
     while (true) {
         if (Proverka(Prov)) {
             istringstream(Prov) >> output;
-            if (output > 0) {
+            if (output > 1e-100) {
                 break;
             }
             else {
@@ -76,8 +76,7 @@ public:
     bool status_wheel(double mileage) {
         int s = 0;
         if (status == 0) {
-            //s = rand() % 99 + mileage * (rand() % 100) * 0.2;
-            s = rand() % 10000;
+            s = rand() % 2500;
         }
         if (s == 0) {
             status = 1;
@@ -194,15 +193,15 @@ public:
         time_of_the_race += pits_time;
     }
 
-    int lap_check(double lenght_lap)
-    {
-        if (current_mileage - lenght_lap >= 0)
-        {
+    int lap_check(double lenght_lap) {
+        if (current_mileage - lenght_lap >= 0) {
             current_laps = int(mileage / lenght_lap);
             current_mileage = 0;
             return 1;
         }
-        else { return 0; }
+        else { 
+            return 0; 
+        }
     }
 
     void check_refuel(double lenght_lap)
@@ -215,17 +214,12 @@ public:
         }
     }
 
-    void check_change_wheels()
-    {
-        if ((Brokenwheels != 0) && (Brokenwheels < amount_wheels))
-        {
+    void check_change_wheels() {
+        if ((Brokenwheels != 0) && (Brokenwheels < amount_wheels)) {
             pits_time += reWheel_time * Brokenwheels;
             for (int i = 0; i < v_wheels.size(); ++i)
             {
-                if (v_wheels[i].get_status() == 1)
-                {
-                    v_wheels[i].set_status(0);
-                }
+                v_wheels[i].set_status(0);
             }
         }
     }
