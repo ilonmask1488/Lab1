@@ -143,6 +143,7 @@ public:
     void mileage_new() { this->mileage += Speed * dt; }
     void current_mileage_new() { this->current_mileage += (Speed * dt); }
     double get_mileage() { return mileage; }
+    void set_mileage(double Mileage) { this->mileage = Mileage; }
     double get_current_mil() { return current_mileage; }
 
     double get_consumption() { return calculating_consumption(power); }
@@ -163,17 +164,15 @@ public:
     void Set_Time_race(double time_of_the_race) { this->time_of_the_race = time_of_the_race; }
     double Get_Time_race() { return time_of_the_race; }
 
-    void output_time()
-    {
-
+    void output_time() {
         double t = this->time_of_the_race;
-        double hours = (int)(t);
+        double hours = (floor)(t);
         double cur_time = (t - hours) * 60;
-        double minutes = (int)(cur_time);
-        double seconds = (int)((cur_time - minutes) * 60);
-        if ((hours == 0) && (minutes == 0)) { cout << "Время: \t" << seconds << "\n"; }
-        else if (hours == 0) { cout << "Время: \t" << minutes << ":" << seconds << "\n"; }
-        else { cout << "Время: \t" << hours << ":" << minutes << ":" << seconds << "\n"; }
+        double minutes = (floor)(cur_time);
+        double seconds = (floor)((cur_time - minutes) * 60);
+        if ((hours == 0) && (minutes == 0)) { cout << "Время: " << seconds << " с\n"; }
+        else if (hours == 0) { cout << "Время:" << minutes << " мин " << seconds << " с\n"; }
+        else { cout << "Время: " << hours << " ч " << minutes << " мин " << seconds << " с\n"; }
     }
 
     void calc_broken_wheels()
@@ -393,6 +392,12 @@ void menu()
             break;
         }
         case input_status::Determination: {
+            for (int i = 0; i < vehicles.size(); i++) {
+                vehicles[i].stat_of_car = 0;
+                vehicles[i].check_refuel(lenght_lap);
+                vehicles[i].check_change_wheels();
+                vehicles[i].set_mileage(0.);
+            }
             system("cls");
             if (carcheck == 0) {
                 cout << "Сначала введите транспортные средства." << endl;
