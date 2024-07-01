@@ -72,13 +72,17 @@ public:
     bool status;
     double get_status() { return status; }
     void set_status(int status) { this->status = status; }
+    void d_wheel(double mileage);
     virtual ~Wheel() {};
-    void status_wheel(double mileage) {
+    bool status_wheel(double mileage) {
         int s = 0;
         if (status == 0) {
             s = rand() % 99 + mileage * (rand() % 100) * 0.2;
         }
-        if (s > 100) { status = 1; }
+        if (s > 150) { return 1; }
+        else {
+            return 0;
+        }
     }
 };
 
@@ -116,7 +120,7 @@ class TransportVehicle : public Engine, public Fuel_system {
     double Start_speed;
     string Prov;
 public:
-    int Brokenwheels;
+    int Brokenwheels = 0;
     Wheel* wheels;
     string Title;
 
@@ -131,7 +135,7 @@ public:
         if ((amount_wheels - Brokenwheels) == 0) {
             s = 1.0 / amount_wheels;
         }
-        Speed = fabs((((double)(power)-((double)(power) / 2.0)) * 20.0) / pow(amount_wheels, 2.0)) * (((amount_wheels - Brokenwheels) + s) / amount_wheels);
+        Speed = (fabs(sqrt(power) * (70.0 / double(amount_wheels) - 2.5) / sqrt(Current_volume)) * (pow(0.75, double(Brokenwheels))));
     }
 
     void mileage_new() { this->mileage += Speed * dt; }
@@ -179,7 +183,7 @@ public:
                 c++;
             }
         }
-        Brokenwheels = c;
+        Brokenwheels += c;
     }
 
     void total_time()
@@ -319,10 +323,6 @@ public:
         Brokenwheels = other.Brokenwheels;
         return *this;
     }
-
-    //~TransportVehicle() {
-    //    delete[] v_wheels;
-    //}
 };
 
 int End_race(vector<TransportVehicle>& vehicles, int amount_laps, double lenght_lap)
@@ -342,6 +342,25 @@ int End_race(vector<TransportVehicle>& vehicles, int amount_laps, double lenght_
     else return 0;
 }
 
+//int Wheel::check_stat(double mileage, double speed) {
+//    if (status == 0)
+//    {
+//        int end = ceil(sqrt(mileage)) + ceil(sqrt(speed));
+//        int start = -1000;//компенсирую большое кол-во итераций
+//        int ratio = ceil(((mileage) * (sqrt(speed) + 1)));
+//        int damageProb = rand() % (end - (start)+ratio) + start;
+//        if (damageProb - end >= 0)
+//        {
+//            return 1;
+//        }
+//        else
+//        {
+//            return 0;
+//        }
+//    }
+//    else return 1;
+//}
+
 bool Sortirovka(TransportVehicle& a, TransportVehicle& b) {
     if (a.Get_Time_race() != b.Get_Time_race()) {
         return a.Get_Time_race() < b.Get_Time_race();
@@ -354,6 +373,17 @@ bool Sortirovka(TransportVehicle& a, TransportVehicle& b) {
 vector<TransportVehicle> RatingResults(vector<TransportVehicle> veh) {
     sort(veh.begin(), veh.end(), Sortirovka);
     return veh;
+}
+
+void Wheel::d_wheel(double mileage) {
+    if (mileage == 0.) {
+        mileage_wheel = 0.0;
+        status = 0;
+    }
+    else {
+        mileage_wheel = mileage;
+        status = status_wheel(mileage);
+    }
 }
 
 void OutputResults(vector<TransportVehicle> veh) {
@@ -377,8 +407,6 @@ void New_car(vector<TransportVehicle>& vehicles) {
 void menu()
 {
     vector<TransportVehicle> vehicles;
-
-    vector<int> skip_id{ -1 };
 
     int amount_laps = 0;
     input_status choice;
@@ -465,7 +493,7 @@ void menu()
                         vehicles[i].current_mileage_new();
                         for (int j = 0; j < vehicles[i].get_amount_wheels(); j++)
                         {
-                            vehicles[i].v_wheels[j].status_wheel(vehicles[i].get_mileage());
+                            vehicles[i].v_wheels[j].d_wheel(vehicles[i].get_mileage());
                         }
                         vehicles[i].calc_broken_wheels();
                         vehicles[i].calc_current_volume(vehicles[i].get_consumption(), vehicles[i].get_current_mil());
@@ -483,6 +511,7 @@ void menu()
                             exit = 1;
                             vehicles[i].Set_Time_race(current_time);
                             vehicles[i].new_current_laps();
+                            cout << vehicles[i].get_carname() << " Финишировал " << endl << endl;
                         }
                         if ((lenght_lap * amount_laps) - (vehicles[i].get_mileage()) <= 0)
                         {
@@ -497,7 +526,12 @@ void menu()
                         {
                             vehicles[i].stat_of_car = 1;
                             racing_cars = racing_cars - 1;
-                            break;
+                            if (racing_cars == 0) {
+                                break;
+                            }
+                            else {
+                                continue;
+                            }
                         }
                         if (vehicles[i].lap_check(lenght_lap) == 1)
                         {
