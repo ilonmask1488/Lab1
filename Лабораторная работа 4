@@ -76,9 +76,9 @@ public:
     bool status_wheel(double mileage) {
         int s = 0;
         if (status == 0) {
-            s = rand() % 2500;
+            s = rand() % 2500 + ((int)mileage%100);
         }
-        if (s == 0) {
+        if (s < 1+((int)mileage%100)) {
             status = 1;
         }
         else {
@@ -322,13 +322,13 @@ void Wheel::d_wheel(double mileage, double speed) {
 void OutputResults(vector<TransportVehicle> veh) {
     vector<TransportVehicle> results = RatingResults(veh);
     for (int i = 0; i < results.size(); i++) {
+        if (results[i].broke == 1) {
+            cout << "Транспорт " << results[i].get_carname() << " не прошел весь путь" << endl;
+        }
         cout << results[i].get_carname() << endl;
         results[i].output_time();
         cout << "Круги: " << results[i].get_current_laps() << endl;
         cout << "Количество заправок: " << int(results[i].Get_num_refuelings()) << endl << endl;
-        if (results[i].broke == 1) {
-            cout << "Транспорт " << results[i].get_carname() << " не прошел весь путь" << endl;
-        }
     }
 }
 
@@ -455,7 +455,7 @@ void menu()
                                 vehicles[i].Set_Time_race(current_time);
                                 vehicles[i].new_current_laps();
                                 vehicles[i].broke = 1;
-                                cout << vehicles[i].get_carname() << " Закончил гонку " << endl << endl;
+                                cout << vehicles[i].get_carname() << " Не закончил гонку " << endl << endl;
                             }
                             if ((lenght_lap * amount_laps) - (vehicles[i].get_mileage()) <= 0) {
                                 exit = 1;
