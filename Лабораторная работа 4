@@ -69,20 +69,23 @@ int input(string a) {
 class Wheel {
 public:
     double mileage_wheel;
-    bool status;
+    bool status = 0;
     double get_status() { return status; }
-    void set_status(int status) { this->status = status; }
-    void d_wheel(double mileage);
-    virtual ~Wheel() {};
+    void set_status(int Status) { this->status = Status; }
+    void d_wheel(double mileage, double speed);
     bool status_wheel(double mileage) {
         int s = 0;
         if (status == 0) {
-            s = rand() % 99 + mileage * (rand() % 100) * 0.2;
+            //s = rand() % 99 + mileage * (rand() % 100) * 0.2;
+            s = rand() % 10000;
         }
-        if (s > 150) { return 1; }
+        if (s == 0) {
+            status = 1;
+        }
         else {
-            return 0;
+            status = 0;
         }
+        return status;
     }
 };
 
@@ -165,10 +168,10 @@ public:
     {
 
         double t = this->time_of_the_race;
-        double hours = (floor)(t);
+        double hours = (int)(t);
         double cur_time = (t - hours) * 60;
-        double minutes = (floor)(cur_time);
-        double seconds = (floor)((cur_time - minutes) * 60);
+        double minutes = (int)(cur_time);
+        double seconds = (int)((cur_time - minutes) * 60);
         if ((hours == 0) && (minutes == 0)) { cout << "Время: \t" << seconds << "\n"; }
         else if (hours == 0) { cout << "Время: \t" << minutes << ":" << seconds << "\n"; }
         else { cout << "Время: \t" << hours << ":" << minutes << ":" << seconds << "\n"; }
@@ -183,7 +186,7 @@ public:
                 c++;
             }
         }
-        Brokenwheels += c;
+        Brokenwheels = c;
     }
 
     void total_time()
@@ -214,16 +217,14 @@ public:
 
     void check_change_wheels()
     {
+        if ((Brokenwheels != 0) && (Brokenwheels < amount_wheels))
         {
-            if ((Brokenwheels != 0) && (Brokenwheels < amount_wheels))
+            pits_time += reWheel_time * Brokenwheels;
+            for (int i = 0; i < v_wheels.size(); ++i)
             {
-                pits_time += reWheel_time * Brokenwheels;
-                for (int i = 0; i < v_wheels.size(); ++i)
+                if (v_wheels[i].get_status() == 1)
                 {
-                    if (v_wheels[i].get_status() == 1)
-                    {
-                        v_wheels[i].set_status(0);
-                    }
+                    v_wheels[i].set_status(0);
                 }
             }
         }
@@ -238,30 +239,30 @@ public:
     }
 
     friend istream& operator >> (istream& stream, TransportVehicle& vehicle)
- {
-     cout << "Введите название машины: ";
-     stream >> vehicle.Title;
+    {
+        cout << "Введите название машины: ";
+        stream >> vehicle.Title;
 
-     vehicle.amount_wheels = input("Введите количество колёс: ");
+        vehicle.amount_wheels = input("Введите количество колёс: ");
 
-     for (int i = 0; i < vehicle.amount_wheels; i++) {
-         Wheel wheel1;
-         vehicle.v_wheels.push_back(wheel1);
-     }
+        for (int i = 0; i < vehicle.amount_wheels; i++) {
+            Wheel wheel1;
+            vehicle.v_wheels.push_back(wheel1);
+        }
 
-     vehicle.Volume_tank = input("Введите объём резервуара: ");
+        vehicle.Volume_tank = input("Введите объём резервуара: ");
 
-     vehicle.power = input("Введите мощность: ");
+        vehicle.power = input("Введите мощность: ");
 
-     vehicle.current_mileage = 0;
-     vehicle.current_laps = 0;
-     vehicle.mileage = 0;
-     vehicle.stat_of_car = 0;
-     vehicle.Current_volume = vehicle.Volume_tank;
-     vehicle.engine_consumption = vehicle.calculating_consumption(vehicle.power);
-     vehicle.determination_speed();
-     return stream;
- }
+        vehicle.current_mileage = 0;
+        vehicle.current_laps = 0;
+        vehicle.mileage = 0;
+        vehicle.stat_of_car = 0;
+        vehicle.Current_volume = vehicle.Volume_tank;
+        vehicle.engine_consumption = vehicle.calculating_consumption(vehicle.power);
+        vehicle.determination_speed();
+        return stream;
+    }
 
     friend ostream& operator << (ostream& stream, TransportVehicle& vehicle)
     {
@@ -276,31 +277,10 @@ public:
         stream << "Пробег: " << vehicle.mileage << endl << endl;
         return stream;
     }
-
-    TransportVehicle& operator=(const TransportVehicle& other) {
-        if (this == &other) {
-            return *this;
-        }
-        Title = other.Title;
-        wheels = other.wheels;
-        power = other.power;
-        Volume_tank = other.Volume_tank;
-        Speed = other.Speed;
-        num_refuelings = other.num_refuelings;
-        time_of_the_race = other.time_of_the_race;
-        amount_wheels = other.amount_wheels;
-        Current_volume = other.Current_volume;
-        engine_consumption = other.engine_consumption;
-        mileage = other.mileage;
-        Prov = other.Prov;
-        Brokenwheels = other.Brokenwheels;
-        return *this;
-    }
 };
 
-int End_race(vector<TransportVehicle>& vehicles, int amount_laps, double lenght_lap)
+int End_race(vector<TransportVehicle>& vehicles, int amount_laps, double lenght_lap, int finished_cars)
 {
-    int finished_cars = 0;
     for (int i = 0; i < vehicles.size(); i++)
     {
         if (vehicles[i].get_current_mil() >= amount_laps * lenght_lap)
@@ -314,25 +294,6 @@ int End_race(vector<TransportVehicle>& vehicles, int amount_laps, double lenght_
     }
     else return 0;
 }
-
-//int Wheel::check_stat(double mileage, double speed) {
-//    if (status == 0)
-//    {
-//        int end = ceil(sqrt(mileage)) + ceil(sqrt(speed));
-//        int start = -1000;//компенсирую большое кол-во итераций
-//        int ratio = ceil(((mileage) * (sqrt(speed) + 1)));
-//        int damageProb = rand() % (end - (start)+ratio) + start;
-//        if (damageProb - end >= 0)
-//        {
-//            return 1;
-//        }
-//        else
-//        {
-//            return 0;
-//        }
-//    }
-//    else return 1;
-//}
 
 bool Sortirovka(TransportVehicle& a, TransportVehicle& b) {
     if (a.Get_Time_race() != b.Get_Time_race()) {
@@ -348,7 +309,7 @@ vector<TransportVehicle> RatingResults(vector<TransportVehicle> veh) {
     return veh;
 }
 
-void Wheel::d_wheel(double mileage) {
+void Wheel::d_wheel(double mileage, double speed) {
     if (mileage == 0.) {
         mileage_wheel = 0.0;
         status = 0;
@@ -387,6 +348,7 @@ void menu()
     double lenght_lap = 0;
     int carcheck = 0;
     string Prov;
+    int finished_cars = 0;
     int a;
 
     while (exit_menu == 0)
@@ -400,8 +362,7 @@ void menu()
         cout << "6. Выход" << endl;
         cout << "> ";
         a = input("");
-
-        choice = choice = static_cast<input_status>(a);
+        choice = static_cast<input_status>(a);
 
         switch (choice)
         {
@@ -451,72 +412,70 @@ void menu()
             }
             double current_time = 0;
             int racing_cars = vehicles.size();
-            while (!End_race(vehicles, amount_laps, lenght_lap))
+            while (!End_race(vehicles, amount_laps, lenght_lap, finished_cars))
             {
-                if (racing_cars == 0)
-                {
+                while (racing_cars > 0) {
+                    for (int i = 0; i < vehicles.size(); ++i)
+                    {
+                        int exit = 0;
+                        if (vehicles[i].stat_of_car == 0)
+                        {
+                            vehicles[i].mileage_new();
+                            vehicles[i].current_mileage_new();
+                            for (int j = 0; j < vehicles[i].get_amount_wheels(); j++)
+                            {
+                                if (vehicles[i].v_wheels[j].get_status() == 0) {
+                                    vehicles[i].v_wheels[j].d_wheel(vehicles[i].get_mileage(), vehicles[i].get_speed());
+                                }
+                            }
+                            vehicles[i].calc_broken_wheels();
+                            vehicles[i].calc_current_volume(vehicles[i].get_consumption(), vehicles[i].get_current_mil());
+                            vehicles[i].determination_speed();
+                            vehicles[i].Set_Time_race(current_time);
+                            vehicles[i].output_time();
+                            cout << "Машина: " << vehicles[i].Title
+                                << " Круг: " << vehicles[i].get_current_laps() + 1
+                                << " Скорость: " << vehicles[i].get_speed() << "\n"
+                                << " Текущее топливо " << vehicles[i].get_current_volume()
+                                << " Сломанные колёса: " << vehicles[i].get_broken_wheels() << "\n"
+                                << " Пробег: " << vehicles[i].get_mileage() << "\n";
+                            if (vehicles[i].lap_check(lenght_lap) == 1) {
+                                vehicles[i].check_refuel(lenght_lap);
+                                vehicles[i].check_change_wheels();
+                            }
+                            if ((vehicles[i].get_broken_wheels() == vehicles[i].get_amount_wheels()) || (vehicles[i].get_current_volume() <= 0)) {
+                                exit = 1;
+                                vehicles[i].Set_Time_race(current_time);
+                                vehicles[i].new_current_laps();
+                                cout << vehicles[i].get_carname() << " Закончил гонку " << endl << endl;
+                            }
+                            if ((lenght_lap * amount_laps) - (vehicles[i].get_mileage()) <= 0) {
+                                exit = 1;
+                                vehicles[i].Set_Time_race(current_time);
+                                vehicles[i].set_current_laps(amount_laps);
+                                vehicles[i].output_time();
+                                cout << vehicles[i].get_carname() << " Закончил гонку " << endl << endl;
+                            }
+                            if (exit == 1) {
+                                vehicles[i].stat_of_car = 1;
+                                racing_cars -= 1;
+                                if (racing_cars == 0) {
+                                    break;
+                                }
+                                else {
+                                    continue;
+                                }
+                            }
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                    current_time += dt;
+                }
+                if (racing_cars == 0) {
                     break;
                 }
-                for (int i = 0; i < vehicles.size(); ++i)
-                {
-                    int exit = 0;
-                    if (vehicles[i].stat_of_car == 0)
-                    {
-                        vehicles[i].mileage_new();
-                        vehicles[i].current_mileage_new();
-                        for (int j = 0; j < vehicles[i].get_amount_wheels(); j++)
-                        {
-                            vehicles[i].v_wheels[j].d_wheel(vehicles[i].get_mileage());
-                        }
-                        vehicles[i].calc_broken_wheels();
-                        vehicles[i].calc_current_volume(vehicles[i].get_consumption(), vehicles[i].get_current_mil());
-                        vehicles[i].determination_speed();
-                        vehicles[i].Set_Time_race(current_time);
-                        vehicles[i].output_time();
-                        cout << "Машина: " << vehicles[i].Title
-                            << " Круг: " << vehicles[i].get_current_laps() + 1
-                            << " Скорость: " << vehicles[i].get_speed() << "\n"
-                            << " Текущее топливо " << vehicles[i].get_current_volume()
-                            << " Сломанные колёса: " << vehicles[i].get_broken_wheels() << "\n"
-                            << " Пробег: " << vehicles[i].get_mileage() << "\n";
-                        if ((vehicles[i].get_broken_wheels() == vehicles[i].get_amount_wheels()) || (vehicles[i].get_current_volume() <= 0))
-                        {
-                            exit = 1;
-                            vehicles[i].Set_Time_race(current_time);
-                            vehicles[i].new_current_laps();
-                            cout << vehicles[i].get_carname() << " Финишировал " << endl << endl;
-                        }
-                        if ((lenght_lap * amount_laps) - (vehicles[i].get_mileage()) <= 0)
-                        {
-                            exit = 1;
-                            vehicles[i].Set_Time_race(current_time);
-                            vehicles[i].set_current_laps(amount_laps);
-                            vehicles[i].output_time();
-                            cout << vehicles[i].get_carname() << " Финишировал " << endl << endl;
-
-                        }
-                        if (exit == 1)
-                        {
-                            vehicles[i].stat_of_car = 1;
-                            racing_cars = racing_cars - 1;
-                            if (racing_cars == 0) {
-                                break;
-                            }
-                            else {
-                                continue;
-                            }
-                        }
-                        if (vehicles[i].lap_check(lenght_lap) == 1)
-                        {
-                            vehicles[i].check_refuel(lenght_lap);
-                            vehicles[i].check_change_wheels();
-                        }
-                    }
-                    else {
-                        continue;
-                    }
-                }
-                current_time += dt;
             }
             for (int i = 0; i < vehicles.size(); ++i)
             {
@@ -539,7 +498,7 @@ void menu()
 
 int main() {
     setlocale(LC_ALL, "Russian");
-    srand(time(NULL));
+    srand(time(0));
     menu();
     return 0;
 }
