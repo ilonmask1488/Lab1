@@ -122,6 +122,7 @@ class TransportVehicle : public Engine, public Fuel_system {
     double Start_speed;
     string Prov;
 public:
+    bool broke;
     int Brokenwheels = 0;
     Wheel* wheels;
     string Title;
@@ -325,6 +326,9 @@ void OutputResults(vector<TransportVehicle> veh) {
         results[i].output_time();
         cout << "Круги: " << results[i].get_current_laps() << endl;
         cout << "Количество заправок: " << int(results[i].Get_num_refuelings()) << endl << endl;
+        if (results[i].broke == 1) {
+            cout << "Транспорт " << results[i].get_carname() << " не прошел весь путь" << endl;
+        }
     }
 }
 
@@ -394,6 +398,7 @@ void menu()
             amount_laps = input("Введите количество кругов: ");
 
             lenght_lap = input("Введите длину круга: ");
+
             break;
         }
         case input_status::Determination: {
@@ -449,6 +454,7 @@ void menu()
                                 exit = 1;
                                 vehicles[i].Set_Time_race(current_time);
                                 vehicles[i].new_current_laps();
+                                vehicles[i].broke = 1;
                                 cout << vehicles[i].get_carname() << " Закончил гонку " << endl << endl;
                             }
                             if ((lenght_lap * amount_laps) - (vehicles[i].get_mileage()) <= 0) {
