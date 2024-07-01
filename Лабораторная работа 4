@@ -203,10 +203,12 @@ public:
         }
     }
 
-    void check_refuel(double lenght_lap)
-    {
+    void check_refuel(double lenght_lap) {
         if (Current_volume <= (engine_consumption * (lenght_lap / 100)))
         {
+            //for (int i = 0; i < 57; i++) {
+            //    cout << "Питстоп для машины " << veh[i].get_carname() << endl;
+            //}
             num_refuelings++;
             pits_time += refueling_time;
             Current_volume = Volume_tank;
@@ -216,6 +218,9 @@ public:
     void check_change_wheels() {
         if ((Brokenwheels != 0) && (Brokenwheels < amount_wheels)) {
             pits_time += reWheel_time * Brokenwheels;
+            //for (int i = 0; i < 15 * Brokenwheels; i++) {
+            //    cout << "Питстоп для машины " << veh[i].get_carname() << endl;
+            //}
             for (int i = 0; i < v_wheels.size(); ++i)
             {
                 v_wheels[i].set_status(0);
@@ -395,7 +400,10 @@ void menu()
             for (int i = 0; i < vehicles.size(); i++) {
                 vehicles[i].stat_of_car = 0;
                 vehicles[i].check_refuel(lenght_lap);
-                vehicles[i].check_change_wheels();
+                for (int j = 0; j < vehicles[i].get_amount_wheels(); ++j)
+                {
+                    vehicles[i].v_wheels[j].set_status(0);
+                }
                 vehicles[i].set_mileage(0.);
             }
             system("cls");
@@ -404,25 +412,20 @@ void menu()
                 continue;
             }
 
-            if (amount_laps == 0)
-            {
+            if (amount_laps == 0) {
                 cout << "Введите количество кругов, прежде чем определять!" << endl;
                 continue;
             }
             double current_time = 0;
             int racing_cars = vehicles.size();
-            while (!End_race(vehicles, amount_laps, lenght_lap, finished_cars))
-            {
+            while (!End_race(vehicles, amount_laps, lenght_lap, finished_cars)) {
                 while (racing_cars > 0) {
-                    for (int i = 0; i < vehicles.size(); ++i)
-                    {
+                    for (int i = 0; i < vehicles.size(); ++i) {
                         int exit = 0;
-                        if (vehicles[i].stat_of_car == 0)
-                        {
+                        if (vehicles[i].stat_of_car == 0) {
                             vehicles[i].mileage_new();
                             vehicles[i].current_mileage_new();
-                            for (int j = 0; j < vehicles[i].get_amount_wheels(); j++)
-                            {
+                            for (int j = 0; j < vehicles[i].get_amount_wheels(); j++) {
                                 if (vehicles[i].v_wheels[j].get_status() == 0) {
                                     vehicles[i].v_wheels[j].d_wheel(vehicles[i].get_mileage(), vehicles[i].get_speed());
                                 }
