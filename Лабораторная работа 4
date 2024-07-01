@@ -42,15 +42,15 @@ bool Proverka(const string& input) {
     return true;
 }
 
-int input(string a) {
+double input(string a) {
     string Prov;
-    int output;
+    double output;
     cout << a;
     cin >> Prov;
     while (true) {
         if (Proverka(Prov)) {
             istringstream(Prov) >> output;
-            if (output > 1e-100) {
+            if (output != 0) {
                 break;
             }
             else {
